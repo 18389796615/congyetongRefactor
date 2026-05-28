@@ -1,0 +1,2739 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从业通企业端 - 企业管理系统</title>
+    <style>
+:root{
+    --primary:#0ea5e9;
+    --primary-light:#38bdf8;
+    --primary-dark:#0284c7;
+    --primary-bg:rgba(14,165,233,.06);
+    --secondary:#06b6d4;
+    --accent:#8b5cf6;
+    --danger:#ef4444;
+    --danger-bg:rgba(239,68,68,.06);
+    --warning:#f59e0b;
+    --success:#10b981;
+    --success-bg:rgba(16,185,129,.06);
+    --bg-sidebar:#0f172a;
+    --bg-sidebar-hover:#1e293b;
+    --bg-card:rgba(255,255,255,.85);
+    --bg-content:#f0f9ff;
+    --bg-grid:rgba(14,165,233,.03);
+    --text-primary:#0f172a;
+    --text-secondary:#475569;
+    --text-muted:#94a3b8;
+    --text-white:#f8fafc;
+    --text-white-secondary:rgba(248,250,252,.7);
+    --border:rgba(14,165,233,.15);
+    --border-light:rgba(14,165,233,.08);
+    --shadow:0 2px 12px rgba(14,165,233,.08);
+    --shadow-lg:0 8px 24px rgba(14,165,233,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;
+    background:var(--bg-content);
+    min-height:100vh;
+    display:flex;
+    position:relative;
+    overflow-x:hidden
+}
+body::before{
+    content:'';
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background-image:linear-gradient(rgba(14,165,233,.03) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(14,165,233,.03) 1px,transparent 1px);
+    background-size:40px 40px;
+    pointer-events:none;
+    z-index:0
+}
+.main-content{position:relative;z-index:1}
+.sidebar{
+    width:240px;
+    background:linear-gradient(180deg,var(--bg-sidebar) 0%,#1e293b 100%);
+    color:var(--text-white);
+    position:fixed;
+    left:0;top:0;bottom:0;
+    display:flex;flex-direction:column;
+    z-index:100;
+    border-right:1px solid rgba(14,165,233,.1)
+}
+.sidebar-header{padding:20px 24px;border-bottom:1px solid rgba(14,165,233,.1)}
+.sidebar-logo{font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.logo-icon{
+    width:32px;height:32px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;color:#fff;
+    box-shadow:0 4px 12px rgba(14,165,233,.3)
+}
+.sidebar-nav{flex:1;padding:16px 0;overflow-y:auto}
+.nav-section{padding:0 8px;margin-bottom:8px}
+.nav-section-title{
+    font-size:11px;color:var(--text-white-secondary);
+    text-transform:uppercase;letter-spacing:.8px;
+    margin-bottom:8px;padding:0 16px;font-weight:600
+}
+.nav-item{
+    display:flex;align-items:center;
+    padding:11px 16px;border-radius:10px;
+    cursor:pointer;transition:all .25s;
+    color:var(--text-white-secondary);font-size:14px;
+    margin:2px 8px;position:relative
+}
+.nav-item:hover{background:rgba(14,165,233,.1);color:var(--text-white);padding-left:20px}
+.nav-item.active{
+    background:linear-gradient(135deg,rgba(14,165,233,.2),rgba(6,182,212,.1));
+    color:var(--text-white);
+    border-left:3px solid var(--primary)
+}
+.nav-item .badge{
+    margin-left:auto;
+    background:var(--danger);
+    color:#fff;
+    font-size:10px;
+    padding:2px 6px;
+    border-radius:10px;
+    min-width:20px;
+    text-align:center
+}
+.nav-item.has-submenu{justify-content:space-between}
+.submenu-arrow{font-size:12px;color:var(--text-white-secondary);transition:transform .2s}
+.nav-item.has-submenu.active .submenu-arrow{transform:rotate(90deg)}
+.submenu{display:none;padding:4px 0;margin:0 8px;border-radius:8px;overflow:hidden}
+.submenu.show{display:block}
+.submenu-item{
+    padding:10px 16px 10px 40px;
+    font-size:13px;color:var(--text-white-secondary);
+    cursor:pointer;transition:all .2s;
+    border-radius:6px;
+}
+.submenu-item:hover{background:rgba(14,165,233,.15);color:var(--text-white);padding-left:44px}
+.submenu-item.active{background:rgba(14,165,233,.2);color:var(--text-white);border-left:2px solid var(--primary)}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08)}
+.search-panel{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.search-row{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;align-items:center}
+.search-row:last-of-type{margin-bottom:0}
+.search-item{display:flex;align-items:center;gap:8px;flex:0 0 24%}
+.search-item label{font-size:13px;color:var(--text-secondary);white-space:nowrap}
+.search-item .form-input,.search-item .form-select{flex:1}
+.search-actions{display:flex;justify-content:center;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid #f0f0f0}
+.toolbar{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center}
+.toolbar-left{display:flex;gap:8px}
+.toolbar-right{display:flex;align-items:center}
+.photo-placeholder{width:40px;height:40px;border-radius:50%;background:#f0f5ff;display:flex;align-items:center;justify-content:center;font-size:20px;color:#0ea5e9}
+.status-badge.status-grey{background:#f5f5f5;color:#666}
+.status-badge.status-orange{background:#fff7ed;color:#f97316}
+.status-badge.status-no{background:#dcfce7;color:#16a34a}
+.status-badge.status-yes{background:#fef3c7;color:#d97706}
+.status-badge.status-success{background:#dcfce7;color:#16a34a}
+.action-link.primary{color:#0ea5e9}
+.action-link.danger{color:#ef4444}
+.user-info{display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;cursor:pointer}
+.user-info:hover{background:var(--bg-sidebar-hover)}
+.user-avatar{
+    width:40px;height:40px;border-radius:50%;
+    background:linear-gradient(135deg,var(--primary),var(--primary-light));
+    display:flex;align-items:center;justify-content:center;font-size:16px
+}
+.user-detail{flex:1}
+.user-name{font-size:14px;font-weight:500;color:var(--text-white)}
+.user-role{font-size:12px;color:var(--text-white-secondary)}
+.logout-icon{font-size:16px;color:var(--text-white-secondary)}
+.main-content{flex:1;margin-left:240px;display:flex;flex-direction:column}
+.top-header{
+    background:rgba(255,255,255,.85);backdrop-filter:blur(12px);
+    padding:14px 24px;box-shadow:var(--shadow-lg);
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:50;
+    border-bottom:1px solid rgba(14,165,233,.1)
+}
+.page-title{font-size:18px;font-weight:600;color:var(--text-primary)}
+.page-subtitle{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.header-right{display:flex;align-items:center;gap:12px}
+.search-input{
+    width:260px;padding:10px 14px;
+    border:1px solid rgba(14,165,233,.2);border-radius:10px;
+    font-size:13px;background:rgba(255,255,255,.8);
+    backdrop-filter:blur(10px);transition:all .2s
+}
+.search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(14,165,233,.1)}
+.header-btn{
+    position:relative;width:38px;height:38px;
+    border-radius:10px;border:none;
+    background:rgba(255,255,255,.8);backdrop-filter:blur(10px);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-size:16px;transition:all .2s
+}
+.header-btn:hover{background:rgba(255,255,255);box-shadow:0 4px 12px rgba(14,165,233,.15)}
+.badge-dot{
+    position:absolute;top:6px;right:6px;
+    background:var(--danger);color:#fff;font-size:10px;
+    width:16px;height:16px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-weight:600
+}
+.page-content{flex:1;padding:24px}
+.page-section{display:none}
+.page-section.active{display:block}
+.breadcrumb{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:var(--text-muted);
+    margin-bottom:16px
+}
+.breadcrumb a{color:var(--primary);text-decoration:none;cursor:pointer}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb .current{color:var(--text-primary);font-weight:500}
+.btn{
+    padding:8px 14px;border-radius:8px;
+    font-size:13px;font-weight:500;border:none;
+    cursor:pointer;transition:all .25s;
+    display:inline-flex;align-items:center;gap:6px;
+    position:relative;overflow:hidden
+}
+.btn-primary{
+    background:linear-gradient(135deg,var(--primary),var(--primary-light));
+    color:#fff;box-shadow:0 4px 12px rgba(14,165,233,.3)
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(14,165,233,.4)}
+.btn-secondary{
+    background:rgba(255,255,255,.7);backdrop-filter:blur(10px);
+    color:var(--text-secondary);border:1px solid rgba(14,165,233,.15)
+}
+.btn-secondary:hover{background:rgba(255,255,255,.9);border-color:var(--primary);box-shadow:0 4px 12px rgba(14,165,233,.15)}
+.btn-danger{
+    background:linear-gradient(135deg,var(--danger),#dc2626);
+    color:#fff;box-shadow:0 4px 12px rgba(239,68,68,.3)
+}
+.btn-danger:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(239,68,68,.4)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary)}
+.btn-outline:hover{background:var(--primary-bg)}
+.status-badge{display:inline-block;padding:4px 10px;border-radius:16px;font-size:11px;font-weight:500}
+.status-active{background:var(--success-bg);color:var(--success)}
+.status-pending{background:rgba(245,158,11,.1);color:var(--warning)}
+.status-inactive{background:rgba(138,154,170,.1);color:var(--text-muted)}
+.status-processing{background:rgba(14,165,233,.1);color:var(--primary)}
+.status-completed{background:var(--success-bg);color:var(--success)}
+.status-rejected{background:var(--danger-bg);color:var(--danger)}
+.priority-high{background:rgba(239,68,68,.1);color:var(--danger)}
+.priority-medium{background:rgba(245,158,11,.1);color:var(--warning)}
+.priority-low{background:rgba(16,185,129,.1);color:var(--success)}
+.filter-bar{
+    padding:18px 24px;background:rgba(255,255,255,.8);
+    backdrop-filter:blur(12px);border-radius:16px;
+    box-shadow:var(--shadow-lg);margin-bottom:20px;
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    border:1px solid rgba(14,165,233,.1)
+}
+.filter-item{flex-shrink:0}
+.filter-input{width:220px;border-radius:10px;border:1px solid rgba(14,165,233,.2)}
+.filter-select{width:160px;border-radius:10px;border:1px solid rgba(14,165,233,.2)}
+.filter-actions{margin-left:auto;display:flex;gap:10px}
+.table-footer{
+    padding:16px 24px;border-top:1px solid rgba(14,165,233,.1);
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(14,165,233,.02)
+}
+.pagination-info{font-size:13px;color:var(--text-muted)}
+.pagination{display:flex;gap:4px}
+.pagination-btn{
+    width:36px;height:36px;border-radius:8px;
+    border:1px solid rgba(14,165,233,.2);
+    background:rgba(255,255,255,.8);color:var(--text-secondary);
+    font-size:13px;cursor:pointer;transition:all .2s
+}
+.pagination-btn:hover:not(:disabled){background:var(--primary-bg);border-color:var(--primary);color:var(--primary)}
+.pagination-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.pagination-btn:disabled{opacity:.5;cursor:not-allowed}
+.pagination-size .form-select{width:100px}
+.data-table{
+    background:rgba(255,255,255,.8);backdrop-filter:blur(12px);
+    border-radius:16px;box-shadow:var(--shadow-lg);
+    overflow:hidden;border:1px solid rgba(14,165,233,.1)
+}
+.table-header{
+    padding:18px 24px;border-bottom:1px solid rgba(14,165,233,.1);
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(14,165,233,.03)
+}
+.table-title{font-size:15px;font-weight:600;color:var(--text-primary)}
+.table-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px}
+.table-actions{display:flex;gap:8px}
+table{width:100%;border-collapse:collapse}
+th{
+    padding:14px 24px;text-align:left;
+    font-size:12px;font-weight:600;color:var(--text-secondary);
+    background:rgba(14,165,233,.04);
+    border-bottom:1px solid rgba(14,165,233,.1)
+}
+td{
+    padding:14px 24px;font-size:14px;color:var(--text-primary);
+    border-bottom:1px solid rgba(14,165,233,.06)
+}
+tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
+.action-links{display:flex;gap:12px}
+.action-link{font-size:12px;color:var(--primary);cursor:pointer;font-weight:500}
+.action-link:hover{text-decoration:underline}
+.action-link.danger{color:var(--danger)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:6px}
+.form-input,.form-select{
+    width:100%;padding:10px 14px;
+    border:1px solid rgba(14,165,233,.2);border-radius:10px;
+    font-size:14px;background:rgba(255,255,255,.8);
+    backdrop-filter:blur(10px);transition:all .2s
+}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(14,165,233,.1)}
+.form-textarea{
+    width:100%;padding:10px 14px;
+    border:1px solid rgba(14,165,233,.2);border-radius:10px;
+    font-size:14px;background:rgba(255,255,255,.8);
+    backdrop-filter:blur(10px);resize:vertical;transition:all .2s
+}
+.form-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(14,165,233,.1)}
+.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.form-error{font-size:12px;color:var(--danger);margin-top:4px;display:none}
+.form-input.error,.form-select.error{border-color:var(--danger)}
+.modal-overlay{
+    position:fixed;top:0;left:0;right:0;bottom:0;
+    background:rgba(15,23,42,.6);backdrop-filter:blur(8px);
+    display:none;align-items:center;justify-content:center;
+    z-index:1000
+}
+.modal-overlay.show{display:flex}
+.modal{
+    background:rgba(255,255,255,.9);backdrop-filter:blur(20px);
+    border-radius:16px;box-shadow:0 20px 60px rgba(14,165,233,.2);
+    width:90%;max-width:600px;max-height:80vh;
+    overflow:hidden;border:1px solid rgba(14,165,233,.15)
+}
+.modal.large{max-width:1200px;max-height:90vh}
+.modal-lg{max-width:900px}
+.modal-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 20px;border-bottom:1px solid var(--border)
+}
+.modal-title{font-size:16px;font-weight:600;color:var(--text-primary)}
+.modal-close{
+    width:32px;height:32px;border:none;background:none;border-radius:6px;
+    cursor:pointer;font-size:16px;color:var(--text-muted)
+}
+.modal-close:hover{background:var(--bg-content)}
+.modal-body{padding:20px;max-height:calc(90vh - 120px);overflow-y:auto}
+.modal-footer{
+    padding:16px 20px;border-top:1px solid var(--border);
+    display:flex;justify-content:flex-end;gap:10px
+}
+.step-wizard{display:flex;align-items:center;margin-bottom:24px;padding:16px;background:#f8fafc;border-radius:12px}
+.wizard-step{display:flex;align-items:center;flex:1;position:relative}
+.wizard-step-content{display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:0 8px}
+.wizard-step .wizard-num{width:40px;height:40px;border-radius:50%;background:#e2e8f0;color:#64748b;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;transition:all .3s}
+.wizard-step.active .wizard-num{background:#1e40af;color:#fff;box-shadow:0 4px 12px rgba(30, 64, 175, 0.3)}
+.wizard-step.completed .wizard-num{background:#22c55e;color:#fff}
+.wizard-step .wizard-label{font-size:12px;color:#64748b;margin-top:8px;text-align:center;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wizard-step.active .wizard-label{color:#1e40af;font-weight:500}
+.wizard-step.completed .wizard-label{color:#22c55e}
+.wizard-line{flex:1;height:3px;background:#e2e8f0;margin:0 4px;border-radius:2px}
+.wizard-step.completed + .wizard-line{background:#86efac}
+.wizard-step.active + .wizard-line{background:#7dd3fc}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.form-item{display:flex;flex-direction:column;gap:6px}
+.form-item label{font-size:13px;color:var(--text-secondary)}
+.form-item label .required{color:var(--danger);margin-right:2px}
+.form-section{margin-bottom:16px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.section-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;cursor:pointer}
+.section-header span:first-child{font-size:14px;font-weight:500;color:var(--text-primary)}
+.section-arrow{font-size:10px;color:var(--text-muted);transition:transform .3s}
+.section-content{padding:16px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;color:var(--text-muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-text{font-size:14px}
+.upload-section{padding:20px}
+.upload-area{border:2px dashed #cbd5e1;border-radius:12px;padding:40px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:border-color .3s}
+.upload-area:hover{border-color:var(--primary)}
+.upload-icon{font-size:48px;margin-bottom:12px}
+.upload-text{font-size:16px;font-weight:500;color:var(--text-primary);margin-bottom:8px}
+.upload-plus{width:120px;height:120px;border-radius:12px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;transition:all .3s}
+.upload-plus:hover{background:#bae6fd;transform:scale(1.05)}
+.plus-icon{font-size:48px;color:#0ea5e9;font-weight:300}
+.input-group{position:relative;display:flex;align-items:center}
+.input-suffix{position:absolute;right:12px;font-size:16px;color:var(--text-muted);cursor:pointer}
+.form-textarea{width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;resize:vertical;transition:border-color .3s}
+.form-textarea:focus{outline:none;border-color:var(--primary)}
+.form-textarea::placeholder{color:var(--text-muted)}
+.upload-multi{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.upload-item{width:100px;height:100px;border-radius:8px;border:2px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s}
+.upload-item:hover{border-color:#0ea5e9;background:#f0f9ff}
+.upload-plus-mini{width:50px;height:50px;border-radius:50%;background:#e0f2fe;display:flex;align-items:center;justify-content:center}
+.plus-icon-mini{font-size:24px;color:#0ea5e9;font-weight:300}
+.summary-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.summary-icon{width:40px;height:40px;border-radius:50%;background:#dcfce7;color:#22c55e;display:flex;align-items:center;justify-content:center;font-size:20px}
+.summary-info{flex:1}
+.summary-title{font-size:18px;font-weight:600;color:var(--text-primary)}
+.summary-desc{font-size:14px;color:var(--text-muted);margin-top:4px}
+.summary-group{margin-bottom:20px;padding:16px;border:1px solid var(--border);border-radius:8px}
+.summary-group-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.summary-item{display:flex;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:6px}
+.summary-label{font-size:13px;color:var(--text-muted)}
+.summary-value{font-size:13px;color:var(--text-primary);font-weight:500}
+.confirm-checkbox{margin-top:20px;padding:16px;background:#fef9c3;border-radius:8px;display:flex;align-items:center;gap:8px}
+.confirm-checkbox input[type="checkbox"]{width:18px;height:18px}
+.confirm-checkbox label{font-size:14px;color:var(--text-secondary);cursor:pointer}
+.upload-hint{font-size:13px;color:var(--text-muted)}
+.summary-section{padding:20px}
+.summary-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.summary-item{display:flex;flex-direction:column;gap:4px;padding:12px;background:#f8fafc;border-radius:8px}
+.summary-label{font-size:12px;color:var(--text-muted)}
+.summary-value{font-size:14px;color:var(--text-primary);font-weight:500}
+.toast{
+    position:fixed;top:20px;right:20px;
+    padding:12px 20px;border-radius:8px;
+    font-size:14px;font-weight:500;color:#fff;
+    z-index:2000;display:none
+}
+.toast.show{display:block;animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast-success{background:var(--success)}
+.toast-error{background:var(--danger)}
+.toast-warning{background:var(--warning)}
+.card-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;margin-bottom:24px
+}
+.card{
+    background:rgba(255,255,255,.8);backdrop-filter:blur(12px);
+    padding:24px;border-radius:16px;box-shadow:var(--shadow-lg);
+    border:1px solid rgba(14,165,233,.1);
+    transition:all .3s
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(14,165,233,.15)}
+.card-icon{
+    width:48px;height:48px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;font-size:24px
+}
+.card-icon.warning{background:rgba(245,158,11,.1);color:var(--warning)}
+.card-icon.success{background:var(--success-bg);color:var(--success)}
+.card-icon.danger{background:var(--danger-bg);color:var(--danger)}
+.card-icon.info{background:var(--primary-bg);color:var(--primary)}
+.card-value{font-size:32px;font-weight:700;color:var(--text-primary);margin-bottom:8px}
+.card-label{font-size:13px;color:var(--text-secondary)}
+.detail-card{
+    background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);
+    border-radius:16px;padding:24px;margin-bottom:24px;color:#fff
+}
+.detail-card-header{display:flex;align-items:center;gap:16px}
+.detail-card-icon{font-size:48px}
+.detail-card-info{flex:1}
+.detail-card-title{font-size:20px;font-weight:600;margin-bottom:8px}
+.detail-card-subtitle{display:flex;gap:8px;flex-wrap:wrap}
+.detail-section{
+    background:rgba(255,255,255,.8);backdrop-filter:blur(12px);
+    border-radius:16px;padding:24px;margin-bottom:24px;
+    border:1px solid rgba(14,165,233,.1)
+}
+.detail-section-header{
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:20px;padding-bottom:16px;
+    border-bottom:1px solid var(--border)
+}
+.detail-section-icon{font-size:20px;color:var(--primary)}
+.detail-section-title{font-size:16px;font-weight:600;color:var(--text-primary)}
+.detail-row{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.detail-item{display:flex;justify-content:space-between;padding:12px 16px;background:var(--bg-content);border-radius:10px}
+.detail-label{font-size:13px;color:var(--text-secondary)}
+.detail-value{font-size:13px;color:var(--text-primary);font-weight:500}
+.quick-actions{display:flex;gap:16px;margin-bottom:24px}
+.action-card{
+    flex:1;
+    background:rgba(255,255,255,.8);backdrop-filter:blur(12px);
+    padding:20px;border-radius:12px;box-shadow:var(--shadow);
+    display:flex;align-items:center;gap:16px;
+    cursor:pointer;transition:all .3s;
+    border:1px solid rgba(14,165,233,.1)
+}
+.action-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.action-card-icon{
+    width:56px;height:56px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;color:var(--primary);
+    background:var(--primary-bg)
+}
+.action-card-content{flex:1}
+.action-card-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.action-card-desc{font-size:12px;color:var(--text-muted)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.empty-state-icon{font-size:48px;margin-bottom:12px}
+.empty-state-text{font-size:14px}
+.logs-container{max-height:400px;overflow-y:auto}
+.log-item{display:flex;gap:12px;padding:12px;border-bottom:1px solid var(--border-light)}
+.log-time{font-size:12px;color:var(--text-muted);min-width:100px}
+.log-status{font-size:12px;padding:2px 6px;border-radius:4px}
+.log-status.success{background:var(--success-bg);color:var(--success)}
+.log-status.error{background:var(--danger-bg);color:var(--danger)}
+.log-status.running{background:rgba(14,165,233,.1);color:var(--primary)}
+.log-message{font-size:13px;color:var(--text-primary)}
+.config-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px}
+.config-tab{
+    padding:10px 20px;font-size:14px;color:var(--text-secondary);
+    cursor:pointer;border-bottom:2px solid transparent;transition:all .2s
+}
+.config-tab:hover{color:var(--primary)}
+.config-tab.active{color:var(--primary);border-color:var(--primary)}
+.config-section{display:none}
+.config-section.active{display:block}
+.rule-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border-light)}
+.rule-item:last-child{border-bottom:none}
+.rule-name{font-size:14px;color:var(--text-primary)}
+.switch{
+    position:relative;width:44px;height:24px;
+    border-radius:12px;background:var(--border);
+    cursor:pointer;transition:all .2s
+}
+.switch.on{background:var(--primary)}
+.switch-handle{
+    position:absolute;top:2px;left:2px;
+    width:20px;height:20px;border-radius:50%;
+    background:#fff;box-shadow:var(--shadow);transition:all .2s
+}
+.switch.on .switch-handle{left:22px}
+input[type="checkbox"]{cursor:pointer}
+input[type="radio"]{cursor:pointer}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 16px;
+    background:var(--bg-content);
+    cursor:pointer;
+    border-radius:10px;
+    transition:all .2s
+}
+.section-header:hover{background:rgba(14,165,233,.08)}
+.section-icon{font-size:16px;margin-right:8px;color:var(--primary)}
+.section-badge{
+    font-size:11px;padding:3px 8px;border-radius:4px;
+    margin-left:8px;font-weight:500
+}
+.required-badge{background:var(--danger-bg);color:var(--danger)}
+.section-arrow{font-size:11px;color:var(--text-muted);transition:transform .3s}
+.section-header.active .section-arrow{transform:rotate(180deg)}
+.section-content{padding:16px;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px}
+.form-section{margin-bottom:16px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.form-section.required-highlight{border-color:rgba(239,68,68,.2)}
+.form-section.required-highlight .section-header{background:var(--danger-bg)}
+.form-section.expandable .section-content{display:none}
+.form-section.expandable.active .section-content{display:block}
+.radio-group{display:flex;gap:16px}
+.radio-item{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--text-secondary);cursor:pointer}
+.radio-item input[type="radio"]{width:16px;height:16px}
+.id-card-input{font-family:monospace;letter-spacing:2px}
+.empty-hint{font-size:12px;color:var(--text-muted);margin-top:4px}
+.cert-list{min-height:100px;border:1px dashed var(--border);border-radius:8px;padding:16px}
+.form-item label{font-weight:500}
+.form-item .required{color:var(--danger);margin-right:2px}
+input:invalid{border-color:var(--danger)}
+input:focus:invalid{box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+
+.cert-item{
+    padding:12px;
+    background:var(--bg-content);
+    border-radius:8px;
+    margin-bottom:12px;
+}
+.cert-item:last-child{margin-bottom:0}
+.cert-actions{display:flex;gap:8px}
+.btn-outline{
+    background:transparent;
+    border:1px solid var(--primary);
+    color:var(--primary);
+    transition:all .2s
+}
+.btn-outline:hover{background:var(--primary-bg)}
+.form-item.half-width{flex:0 0 calc(50% - 8px)}
+.form-item.full-width{flex:0 0 100%}
+.form-input::placeholder{color:var(--text-muted)}
+.form-select option{color:var(--text-primary)}
+.form-select:invalid{color:var(--text-muted)}
+      </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🏢</div>
+                <span>从业通企业端</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">系统菜单</div>
+                <div class="nav-item active" onclick="switchPage('alarm','告警管理','告警列表',this)">
+                    <span>告警管理</span>
+                    <span class="badge">3</span>
+                </div>
+                <div class="nav-item has-submenu" onclick="toggleSubmenu('onboard-submenu',this)">
+                    <span>入职管理</span>
+                    <span class="submenu-arrow">▶</span>
+                </div>
+                <div class="submenu" id="onboard-submenu">
+                    <div class="submenu-item" onclick="switchPage('onboard-pending','入职管理','拟入职',this)">拟入职</div>
+                    <div class="submenu-item" onclick="switchPage('onboard-review','入职管理','预审记录',this)">预审记录</div>
+                </div>
+                <div class="nav-item" onclick="switchPage('hr','人事管理','人事档案',this)">
+                    <span>人事管理</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('archive','人员档案','档案管理',this)">
+                    <span>人员档案</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('system','系统设置','系统配置',this)">
+                    <span>系统设置</span>
+                </div>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div class="user-detail">
+                    <div class="user-name">张三</div>
+                    <div class="user-role">企业管理员</div>
+                </div>
+                <span class="logout-icon">🚪</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <div class="page-title" id="pageTitle">告警管理</div>
+                <div class="page-subtitle" id="pageSubtitle">监控企业告警信息</div>
+            </div>
+
+        </header>
+
+        <div class="page-content">
+            <div class="page-section active" id="page-alarm">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-icon danger">⚠️</div>
+                        <div class="card-value">3</div>
+                        <div class="card-label">待处理告警</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon warning">⏳</div>
+                        <div class="card-value">8</div>
+                        <div class="card-label">处理中</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon success">✓</div>
+                        <div class="card-value">156</div>
+                        <div class="card-label">已解决</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon info">📊</div>
+                        <div class="card-value">98%</div>
+                        <div class="card-label">解决率</div>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <div>
+                            <div class="table-title">告警列表</div>
+                            <div class="table-subtitle">共 167 条告警记录</div>
+                        </div>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary">导出</button>
+                            <button class="btn btn-primary">新增告警</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>告警标题</th>
+                                <th>告警类型</th>
+                                <th>优先级</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>员工合同即将到期</td>
+                                <td><span class="status-badge status-pending">人事告警</span></td>
+                                <td><span class="priority-medium">中等</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">处理</span>
+                                        <span class="action-link">详情</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>培训证书即将过期</td>
+                                <td><span class="status-badge status-pending">培训告警</span></td>
+                                <td><span class="priority-high">高</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">处理</span>
+                                        <span class="action-link">详情</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>安全隐患提醒</td>
+                                <td><span class="status-badge status-active">安全告警</span></td>
+                                <td><span class="priority-high">高</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">处理</span>
+                                        <span class="action-link">详情</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>体检到期提醒</td>
+                                <td><span class="status-badge status-pending">健康告警</span></td>
+                                <td><span class="priority-low">低</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">处理</span>
+                                        <span class="action-link">详情</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="table-footer">
+                        <div class="pagination-info">共 167 条记录，当前显示第 1-10 条</div>
+                        <div class="pagination">
+                            <button class="pagination-btn" disabled>‹</button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <button class="pagination-btn">...</button>
+                            <button class="pagination-btn">17</button>
+                            <button class="pagination-btn">›</button>
+                        </div>
+                        <div class="pagination-size">
+                            <select class="form-select">
+                                <option>10 条/页</option>
+                                <option>20 条/页</option>
+                                <option>50 条/页</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-section" id="page-onboard-pending">
+                <div class="breadcrumb">
+                    <a onclick="switchPage('onboard-pending','入职管理','拟入职')">入职管理</a><span>/</span><span class="current">拟入职</span>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="搜索姓名...">
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部部门</option>
+                            <option>西山煤电集团发电分公司本部</option>
+                            <option>外委队伍一</option>
+                            <option>屯兰瓦斯电厂本部</option>
+                            <option>兴能发电公司本部</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部企业</option>
+                            <option>西山煤电集团</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部工种</option>
+                            <option>测试工种</option>
+                            <option>测试工种管理</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="手机号后四位">
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部状态</option>
+                            <option>未上传</option>
+                            <option>未提交</option>
+                            <option>已提交</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="开始日期">
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="结束日期">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary">重置</button>
+                        <button class="btn btn-primary">筛选</button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn btn-secondary" onclick="refreshTable()">刷新</button>
+                        <button class="btn btn-primary" onclick="showOnboardModal()">新增</button>
+                        <button class="btn btn-primary" onclick="batchSubmit()">批量提交入职</button>
+                        
+                        <button class="btn btn-secondary" onclick="showImportModal()">导入</button>
+                        <button class="btn btn-secondary" onclick="exportData()">导出</button>
+                    </div>
+                    <div class="toolbar-right">
+                        <span>共 4 条</span>
+                        <select class="form-select" style="width: auto; margin-left: 8px;">
+                            <option>20条/页</option>
+                            <option>50条/页</option>
+                            <option>100条/页</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" onclick="selectAll()"></th>
+                                <th>序号</th>
+                                <th>照片</th>
+                                <th>姓名</th>
+                                <th>身份证号</th>
+                                <th>拟入职企业</th>
+                                <th>拟入职工作部门</th>
+                                <th>手机号码</th>
+                                <th>工种类别</th>
+                                <th>工种</th>
+                                <th>拟入职状态</th>
+                                <th>证照是否到期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>1</td>
+                                <td><div class="photo-placeholder">👤</div></td>
+                                <td>杨俊实</td>
+                                <td>522632********0036</td>
+                                <td>西山煤电集团</td>
+                                <td>西山煤电集团发电分公司本部</td>
+                                <td>130****6634</td>
+                                <td>测试工种</td>
+                                <td>测试工种类别</td>
+                                <td><span class="status-badge status-grey">未上传</span></td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">去完善</span>
+                                        <span class="action-link">查看</span>
+                                        <span class="action-link danger">删除</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2</td>
+                                <td><div class="photo-placeholder">👤</div></td>
+                                <td>王泽刚</td>
+                                <td>520103********1614</td>
+                                <td>西山煤电集团</td>
+                                <td>外委队伍一</td>
+                                <td>131****1234</td>
+                                <td>测试工种</td>
+                                <td>测试工种类别</td>
+                                <td><span class="status-badge status-orange">未提交</span></td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">去完善</span>
+                                        <span class="action-link primary">提交入职</span>
+                                        <span class="action-link">查看</span>
+                                        <span class="action-link danger">删除</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>3</td>
+                                <td><div class="photo-placeholder">👤</div></td>
+                                <td>测试一</td>
+                                <td>510411********3735</td>
+                                <td>西山煤电集团</td>
+                                <td>屯兰瓦斯电厂本部</td>
+                                <td>138****6666</td>
+                                <td>测试工种管理</td>
+                                <td>管理工种一</td>
+                                <td><span class="status-badge status-success">已提交</span></td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>4</td>
+                                <td><div class="photo-placeholder">👤</div></td>
+                                <td>张测试</td>
+                                <td>370101********0577</td>
+                                <td>西山煤电集团</td>
+                                <td>兴能发电公司本部</td>
+                                <td>152****7894</td>
+                                <td>测试工种管理</td>
+                                <td>管理工种一</td>
+                                <td><span class="status-badge status-success">已提交</span></td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="table-footer">
+                        <div class="pagination-info">共 4 条记录，当前显示第 1-4 条</div>
+                        <div class="pagination">
+                            <button class="pagination-btn" disabled>‹</button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn" disabled>›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-section" id="page-onboard-review">
+                <div class="breadcrumb">
+                    <a onclick="switchPage('onboard-review','入职管理','预审记录')">入职管理</a><span>/</span><span class="current">预审记录</span>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="搜索姓名...">
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="手机号后四位">
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部建议</option>
+                            <option>正常</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部状态</option>
+                            <option>预审通过</option>
+                            <option>预审不通过</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="开始时间">
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="结束时间">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary">重置</button>
+                        <button class="btn btn-primary">筛选</button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn btn-secondary" onclick="refreshTable()">刷新</button>
+                        <button class="btn btn-primary" onclick="exportReviewData()">导出预审结果</button>
+                    </div>
+                    <div class="toolbar-right">
+                        <span>共 10 条</span>
+                        <select class="form-select" style="width: auto; margin-left: 8px;">
+                            <option>20条/页</option>
+                            <option>50条/页</option>
+                            <option>100条/页</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" onclick="selectAll()"></th>
+                                <th>序号</th>
+                                <th>姓名</th>
+                                <th>身份证号</th>
+                                <th>是否在其他煤矿在职</th>
+                                <th>2026年煤矿从业经历</th>
+                                <th>预审状态</th>
+                                <th>异常记录</th>
+                                <th>三违记录</th>
+                                <th>是否在考核黑名单</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>1</td>
+                                <td>测试一</td>
+                                <td>510411********7358</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-success">预审通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>2</td>
+                                <td>张宏杰</td>
+                                <td>520102********8112</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-danger">预审不通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>3</td>
+                                <td>张宏杰</td>
+                                <td>520102********8112</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-danger">预审不通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>4</td>
+                                <td>王测试</td>
+                                <td>522422********0016</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-danger">预审不通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>5</td>
+                                <td>张测试</td>
+                                <td>370101********0577</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-success">预审通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>正常</td>
+                                <td>2026.04.03 22:48:04</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>6</td>
+                                <td>艾勇</td>
+                                <td>522125********4315</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-success">预审通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>正常</td>
+                                <td>2026.04.01 15:48:10</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>7</td>
+                                <td>张宏杰</td>
+                                <td>520102********8112</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-danger">预审不通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>正常</td>
+                                <td>2026.03.21 19:39:13</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>8</td>
+                                <td>张宏杰</td>
+                                <td>520102********8112</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-danger">预审不通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>正常</td>
+                                <td>2026.03.21 19:38:19</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>9</td>
+                                <td>王泽刚</td>
+                                <td>520103********1614</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-success">预审通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>正常</td>
+                                <td>2026.01.15 19:25:12</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>10</td>
+                                <td>爱德华数据库</td>
+                                <td>520202********7051</td>
+                                <td><span class="status-badge status-yes">是</span></td>
+                                <td>暂无</td>
+                                <td><span class="status-badge status-success">预审通过</span></td>
+                                <td>0条</td>
+                                <td>0条</td>
+                                <td><span class="status-badge status-no">否</span></td>
+                                <td>正常</td>
+                                <td>2026.01.04 10:01:08</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">查看</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="table-footer">
+                        <div class="pagination-info">共 10 条记录，当前显示第 1-10 条</div>
+                        <div class="pagination">
+                            <button class="pagination-btn" disabled>‹</button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn" disabled>›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-section" id="page-hr">
+                <div class="breadcrumb">
+                    <a onclick="switchPage('hr','人事管理','人事档案')">人事管理</a><span>/</span><span class="current">人事档案</span>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-icon info">👥</div>
+                        <div class="card-value">234</div>
+                        <div class="card-label">员工总数</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon success">📈</div>
+                        <div class="card-value">12</div>
+                        <div class="card-label">本月入职</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon warning">📉</div>
+                        <div class="card-value">3</div>
+                        <div class="card-label">本月离职</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon danger">⚠️</div>
+                        <div class="card-value">8</div>
+                        <div class="card-label">待办事项</div>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-item">
+                        <input type="text" class="form-input filter-input" placeholder="搜索姓名/工号...">
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部部门</option>
+                            <option>人力资源部</option>
+                            <option>安全生产部</option>
+                            <option>生产部</option>
+                            <option>培训部</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option>全部状态</option>
+                            <option>在职</option>
+                            <option>离职</option>
+                            <option>休假</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary">重置</button>
+                        <button class="btn btn-primary">筛选</button>
+                    </div>
+                </div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <div>
+                            <div class="table-title">员工列表</div>
+                            <div class="table-subtitle">共 234 名员工</div>
+                        </div>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary">导出</button>
+                            <button class="btn btn-primary">新增员工</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>姓名</th>
+                                <th>工号</th>
+                                <th>部门</th>
+                                <th>岗位</th>
+                                <th>入职日期</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>张三</td>
+                                <td>EMP001</td>
+                                <td>人力资源部</td>
+                                <td>主管</td>
+                                <td>2024-03-15</td>
+                                <td><span class="status-badge status-active">在职</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">编辑</span>
+                                        <span class="action-link">详情</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>李四</td>
+                                <td>EMP002</td>
+                                <td>安全生产部</td>
+                                <td>专员</td>
+                                <td>2024-06-20</td>
+                                <td><span class="status-badge status-active">在职</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">编辑</span>
+                                        <span class="action-link">详情</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>王五</td>
+                                <td>EMP003</td>
+                                <td>生产部</td>
+                                <td>工人</td>
+                                <td>2023-11-08</td>
+                                <td><span class="status-badge status-pending">休假</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link">编辑</span>
+                                        <span class="action-link">详情</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="table-footer">
+                        <div class="pagination-info">共 234 条记录，当前显示第 1-10 条</div>
+                        <div class="pagination">
+                            <button class="pagination-btn" disabled>‹</button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <button class="pagination-btn">...</button>
+                            <button class="pagination-btn">24</button>
+                            <button class="pagination-btn">›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-section" id="page-archive">
+                <div class="breadcrumb">
+                    <a onclick="switchPage('archive','人员档案','档案管理')">人员档案</a><span>/</span><span class="current">档案管理</span>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <div class="detail-card-icon">📋</div>
+                        <div class="detail-card-info">
+                            <div class="detail-card-title">人员档案管理</div>
+                            <div class="detail-card-subtitle">
+                                <span class="status-badge">已归档 189 份</span>
+                                <span class="status-badge">待完善 45 份</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-header">
+                        <div class="detail-section-icon">👤</div>
+                        <div class="detail-section-title">档案详情</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-item"><div class="detail-label">姓名</div><div class="detail-value">张三</div></div>
+                        <div class="detail-item"><div class="detail-label">工号</div><div class="detail-value">EMP001</div></div>
+                        <div class="detail-item"><div class="detail-label">部门</div><div class="detail-value">人力资源部</div></div>
+                        <div class="detail-item"><div class="detail-label">岗位</div><div class="detail-value">主管</div></div>
+                        <div class="detail-item"><div class="detail-label">入职日期</div><div class="detail-value">2024-03-15</div></div>
+                        <div class="detail-item"><div class="detail-label">合同到期</div><div class="detail-value">2027-03-14</div></div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-header">
+                        <div class="detail-section-icon">📁</div>
+                        <div class="detail-section-title">档案文件</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                        <div style="padding: 16px; background: var(--bg-content); border-radius: 10px; cursor: pointer;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">📄</div>
+                            <div style="font-size: 13px; color: var(--text-primary);">劳动合同.pdf</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">2024-03-15</div>
+                        </div>
+                        <div style="padding: 16px; background: var(--bg-content); border-radius: 10px; cursor: pointer;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">🖼️</div>
+                            <div style="font-size: 13px; color: var(--text-primary);">身份证复印件.jpg</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">2024-03-15</div>
+                        </div>
+                        <div style="padding: 16px; background: var(--bg-content); border-radius: 10px; cursor: pointer;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">🏥</div>
+                            <div style="font-size: 13px; color: var(--text-primary);">体检报告.pdf</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">2024-03-10</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-header">
+                        <div class="detail-section-icon">📝</div>
+                        <div class="detail-section-title">档案变动记录</div>
+                    </div>
+                    <div class="logs-container">
+                        <div class="log-item">
+                            <div class="log-time">2026-05-10</div>
+                            <div class="log-status success">已更新</div>
+                            <div class="log-message">更新了劳动合同信息</div>
+                        </div>
+                        <div class="log-item">
+                            <div class="log-time">2026-04-15</div>
+                            <div class="log-status success">已更新</div>
+                            <div class="log-message">上传了年度体检报告</div>
+                        </div>
+                        <div class="log-item">
+                            <div class="log-time">2024-03-15</div>
+                            <div class="log-status success">已创建</div>
+                            <div class="log-message">创建员工档案</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-section" id="page-system">
+                <div class="breadcrumb">
+                    <a onclick="switchPage('system','系统设置','系统配置')">系统设置</a><span>/</span><span class="current">系统配置</span>
+                </div>
+
+                <div class="config-tabs">
+                    <div class="config-tab active" onclick="showConfigTab('basic')">企业信息</div>
+                    <div class="config-tab" onclick="showConfigTab('security')">安全设置</div>
+                    <div class="config-tab" onclick="showConfigTab('notify')">通知设置</div>
+                    <div class="config-tab" onclick="showConfigTab('data')">数据管理</div>
+                </div>
+
+                <div class="config-section active" id="config-basic">
+                    <div class="detail-card">
+                        <div class="detail-card-header">
+                            <div class="detail-card-icon">🏢</div>
+                            <div class="detail-card-info">
+                                <div class="detail-card-title">贵州XX煤矿有限公司</div>
+                                <div class="detail-card-subtitle">
+                                    <span class="status-badge status-active">已启用</span>
+                                    <span class="status-badge">企业版</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-section-header">
+                            <div class="detail-section-icon">📋</div>
+                            <div class="detail-section-title">基本信息</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">企业名称</label>
+                                <input type="text" class="form-input" value="贵州XX煤矿有限公司">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">企业简称</label>
+                                <input type="text" class="form-input" value="XX煤矿">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">统一信用代码</label>
+                                <input type="text" class="form-input" value="91520000XXXXXXXXXXXX">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">企业类型</label>
+                                <select class="form-select">
+                                    <option>煤矿企业</option>
+                                    <option>集团</option>
+                                    <option>培训机构</option>
+                                    <option>律所</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">产品版本</label>
+                                <select class="form-select">
+                                    <option>企业版</option>
+                                    <option>机构版</option>
+                                    <option>集团版</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">所属地区</label>
+                                <select class="form-select">
+                                    <option>贵州省六盘水市</option>
+                                    <option>贵州省贵阳市</option>
+                                    <option>贵州省遵义市</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-section-header">
+                            <div class="detail-section-icon">📞</div>
+                            <div class="detail-section-title">联系信息</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">联系人</label>
+                                <input type="text" class="form-input" value="张三">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">联系电话</label>
+                                <input type="text" class="form-input" value="138****8888">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">电子邮箱</label>
+                                <input type="text" class="form-input" value="contact@xxcoal.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">企业地址</label>
+                                <input type="text" class="form-input" value="贵州省六盘水市XX区XX路XX号">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-section-header">
+                            <div class="detail-section-icon">📅</div>
+                            <div class="detail-section-title">入驻信息</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-item"><div class="detail-label">入驻状态</div><div class="detail-value"><span class="status-badge status-active">已启用</span></div></div>
+                            <div class="detail-item"><div class="detail-label">创建时间</div><div class="detail-value">2026-01-15 10:30:00</div></div>
+                            <div class="detail-item"><div class="detail-label">开通时间</div><div class="detail-value">2026-01-16 09:00:00</div></div>
+                            <div class="detail-item"><div class="detail-label">到期时间</div><div class="detail-value">2027-01-15 23:59:59</div></div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
+                        <button class="btn btn-secondary">取消</button>
+                        <button class="btn btn-primary">保存配置</button>
+                    </div>
+                </div>
+
+                <div class="config-section" id="config-security">
+                    <div class="detail-section">
+                        <div class="detail-section-header">
+                            <div class="detail-section-icon">🔒</div>
+                            <div class="detail-section-title">安全设置</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">登录失败次数限制</label>
+                                <input type="number" class="form-input" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">会话超时时间（分钟）</label>
+                                <input type="number" class="form-input" value="30">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">密码规则</label>
+                            <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked>至少6位
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked>包含数字
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox">包含字母
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox">包含特殊字符
+                                </label>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
+                            <button class="btn btn-secondary">取消</button>
+                            <button class="btn btn-primary">保存配置</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section" id="config-notify">
+                    <div class="detail-section">
+                        <div class="detail-section-header">
+                            <div class="detail-section-icon">🔔</div>
+                            <div class="detail-section-title">通知设置</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">邮件通知</label>
+                            <div class="rule-item">
+                                <span class="rule-name">启用邮件通知</span>
+                                <div class="switch on"><div class="switch-handle"></div></div>
+                            </div>
+                            <div class="rule-item">
+                                <span class="rule-name">告警通知</span>
+                                <div class="switch on"><div class="switch-handle"></div></div>
+                            </div>
+                            <div class="rule-item">
+                                <span class="rule-name">入职通知</span>
+                                <div class="switch on"><div class="switch-handle"></div></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">短信通知</label>
+                            <div class="rule-item">
+                                <span class="rule-name">启用短信通知</span>
+                                <div class="switch on"><div class="switch-handle"></div></div>
+                            </div>
+                            <div class="rule-item">
+                                <span class="rule-name">紧急告警通知</span>
+                                <div class="switch on"><div class="switch-handle"></div></div>
+                            </div>
+                            <div class="rule-item">
+                                <span class="rule-name">合同到期提醒</span>
+                                <div class="switch"><div class="switch-handle"></div></div>
+                            </div>
+                        </div>
+                        <div class="btn-group" style="justify-content: flex-end; margin-top: 20px;">
+                            <button class="btn btn-secondary">取消</button>
+                            <button class="btn btn-primary">保存配置</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section" id="config-data">
+                    <div class="detail-section">
+                        <div class="detail-section-header">
+                            <div class="detail-section-icon">💾</div>
+                            <div class="detail-section-title">数据管理</div>
+                        </div>
+                        <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                            <button class="btn btn-primary" style="flex: 1;">手动备份</button>
+                            <button class="btn btn-secondary" style="flex: 1;">数据同步</button>
+                            <button class="btn btn-secondary" style="flex: 1;">缓存清理</button>
+                        </div>
+                        <div style="padding: 16px; background: #fff7e6; border-radius: 10px;">
+                            <div style="color: var(--warning); font-weight: 500; margin-bottom: 8px;">⚠️ 注意事项</div>
+                            <div style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
+                                • 建议每周至少备份一次数据<br>
+                                • 数据同步会覆盖本地数据，请谨慎操作<br>
+                                • 缓存清理后可能需要重新登录
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal large">
+            <div class="modal-header">
+                <div class="modal-title">新增</div>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="step-wizard">
+                    <div class="wizard-step active" onclick="setWizardStep(1)">
+                        <div class="wizard-step-content">
+                            <div class="wizard-num">1</div>
+                            <div class="wizard-label">信息录入</div>
+                        </div>
+                    </div>
+                    <div class="wizard-line"></div>
+                    <div class="wizard-step" onclick="setWizardStep(2)">
+                        <div class="wizard-step-content">
+                            <div class="wizard-num">2</div>
+                            <div class="wizard-label">体检报告上传</div>
+                        </div>
+                    </div>
+                    <div class="wizard-line"></div>
+                    <div class="wizard-step" onclick="setWizardStep(3)">
+                        <div class="wizard-step-content">
+                            <div class="wizard-num">3</div>
+                            <div class="wizard-label">培训合格证明上传</div>
+                        </div>
+                    </div>
+                    <div class="wizard-line"></div>
+                    <div class="wizard-step" onclick="setWizardStep(4)">
+                        <div class="wizard-step-content">
+                            <div class="wizard-num">4</div>
+                            <div class="wizard-label">劳动合同上传</div>
+                        </div>
+                    </div>
+                    <div class="wizard-line"></div>
+                    <div class="wizard-step" onclick="setWizardStep(5)">
+                        <div class="wizard-step-content">
+                            <div class="wizard-num">5</div>
+                            <div class="wizard-label">入职预审</div>
+                        </div>
+                    </div>
+                    <div class="wizard-line"></div>
+                    <div class="wizard-step" onclick="setWizardStep(6)">
+                        <div class="wizard-step-content">
+                            <div class="wizard-num">6</div>
+                            <div class="wizard-label">提交入职</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wizard-content" id="wizard-step1">
+                    <div class="form-section required-highlight">
+                        <div class="section-header" onclick="toggleSection('identity-section')">
+                            <div class="section-icon">👤</div>
+                            <span>身份信息</span>
+                            <span class="section-badge required-badge">必填</span>
+                            <span class="section-arrow">▼</span>
+                        </div>
+                        <div class="section-content" id="identity-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>人员姓名</label>
+                                    <input type="text" class="form-input" placeholder="请输入人员姓名" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>身份证号</label>
+                                    <input type="text" class="form-input id-card-input" placeholder="请输入18位身份证号" maxlength="18" oninput="autoFillFromIdCard(this)">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">性别</label>
+                                    <select class="form-select" id="gender-select">
+                                        <option>请选择性别</option>
+                                        <option>男</option>
+                                        <option>女</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">出生日期</label>
+                                    <input type="text" class="form-input" id="birth-date-input" placeholder="自动从身份证提取">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>联系电话</label>
+                                    <input type="tel" class="form-input" placeholder="请输入手机号码" maxlength="11">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>健康状态</label>
+                                    <select class="form-select">
+                                        <option value="">请选择健康状态</option>
+                                        <option value="healthy">健康</option>
+                                        <option value="good">良好</option>
+                                        <option value="general">一般</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header" onclick="toggleSection('work-section')">
+                            <div class="section-icon">💼</div>
+                            <span>工作信息</span>
+                            <span class="section-badge required-badge">必填</span>
+                            <span class="section-arrow">▼</span>
+                        </div>
+                        <div class="section-content" id="work-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>入职日期</label>
+                                    <input type="text" class="form-input" placeholder="请选择入职日期" onclick="showDatePicker(this)">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>所属企业</label>
+                                    <select class="form-select" disabled>
+                                        <option>西山煤电集团</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>所属部门</label>
+                                    <select class="form-select" required>
+                                        <option value="">请选择所属部门</option>
+                                        <option value="dept1">西山煤电集团发电分公司本部</option>
+                                        <option value="dept2">外委队伍一</option>
+                                        <option value="dept3">屯兰瓦斯电厂本部</option>
+                                        <option value="dept4">兴能发电公司本部</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>工种</label>
+                                    <select class="form-select" required onchange="updateWorkTypeOptions(this)">
+                                        <option value="">请选择工种</option>
+                                        <option value="work1">井下作业人员</option>
+                                        <option value="work2">地面作业人员</option>
+                                        <option value="work3">管理人员</option>
+                                        <option value="work4">技术人员</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">工种类别</label>
+                                    <select class="form-select" id="work-type-select">
+                                        <option value="">请先选择工种</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>下井人员</label>
+                                    <div class="radio-group">
+                                        <label class="radio-item"><input type="radio" name="isUnderground" value="yes" checked> 是</label>
+                                        <label class="radio-item"><input type="radio" name="isUnderground" value="no"> 否</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>从业日期</label>
+                                    <input type="text" class="form-input" placeholder="请选择从业日期" onclick="showDatePicker(this)">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">岗位</label>
+                                    <select class="form-select">
+                                        <option value="">请选择岗位</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section expandable">
+                        <div class="section-header" onclick="toggleSection('education-section')">
+                            <div class="section-icon">🎓</div>
+                            <span>学历信息</span>
+                            <span class="section-arrow">▼</span>
+                        </div>
+                        <div class="section-content" id="education-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>学历（全日制）</label>
+                                    <select class="form-select">
+                                        <option value="">请选择学历</option>
+                                        <option value="primary">小学</option>
+                                        <option value="junior">初中</option>
+                                        <option value="senior">高中/中专</option>
+                                        <option value="college">大专</option>
+                                        <option value="bachelor">本科</option>
+                                        <option value="master">硕士</option>
+                                        <option value="doctor">博士</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">所学专业（全日制）</label>
+                                    <input type="text" class="form-input" placeholder="请输入所学专业">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">毕业院校（全日制）</label>
+                                    <input type="text" class="form-input" placeholder="请输入毕业院校">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>政治面貌</label>
+                                    <select class="form-select">
+                                        <option value="">请选择政治面貌</option>
+                                        <option value="party">中共党员</option>
+                                        <option value="league">共青团员</option>
+                                        <option value="mass">群众</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">最高学历（非全日制）</label>
+                                    <select class="form-select">
+                                        <option value="">请选择学历</option>
+                                        <option value="none">无</option>
+                                        <option value="college">大专</option>
+                                        <option value="bachelor">本科</option>
+                                        <option value="master">硕士</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">所学专业（非全日制）</label>
+                                    <input type="text" class="form-input" placeholder="请输入所学专业">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section expandable">
+                        <div class="section-header" onclick="toggleSection('profile-section')">
+                            <div class="section-icon">🏠</div>
+                            <span>个人档案</span>
+                            <span class="section-arrow">▼</span>
+                        </div>
+                        <div class="section-content" id="profile-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">民族</label>
+                                    <select class="form-select">
+                                        <option value="">请选择民族</option>
+                                        <option value="han">汉族</option>
+                                        <option value="miao">苗族</option>
+                                        <option value="yi">彝族</option>
+                                        <option value="buyi">布依族</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">籍贯</label>
+                                    <input type="text" class="form-input" placeholder="请输入籍贯">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">婚姻状况</label>
+                                    <select class="form-select">
+                                        <option value="">请选择婚姻状况</option>
+                                        <option value="single">未婚</option>
+                                        <option value="married">已婚</option>
+                                        <option value="divorced">离异</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">血型</label>
+                                    <select class="form-select">
+                                        <option value="">请选择血型</option>
+                                        <option value="A">A型</option>
+                                        <option value="B">B型</option>
+                                        <option value="AB">AB型</option>
+                                        <option value="O">O型</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">电子邮箱</label>
+                                    <input type="email" class="form-input" placeholder="请输入电子邮箱">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">通讯地址</label>
+                                    <input type="text" class="form-input" placeholder="请输入通讯地址">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">家庭联系人</label>
+                                    <input type="text" class="form-input" placeholder="请输入家庭联系人">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">联系人电话</label>
+                                    <input type="tel" class="form-input" placeholder="请输入联系人电话">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section expandable">
+                        <div class="section-header" onclick="toggleSection('qualification-section')">
+                            <div class="section-icon">📄</div>
+                            <span>资格证书</span>
+                            <span class="section-arrow">▼</span>
+                        </div>
+                        <div class="section-content" id="qualification-section">
+                            <div class="cert-list" id="cert-list">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📄</div>
+                                    <div class="empty-text">暂无证书信息</div>
+                                    <div class="empty-hint">点击下方按钮添加资格证书</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline" style="margin-top: 16px; width: 100%;" onclick="addCertificate()">
+                                <span>+</span> 添加资格证书
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header" onclick="toggleSection('emergency-section')">
+                            <div class="section-icon">🆘</div>
+                            <span>紧急联系人</span>
+                            <span class="section-arrow">▼</span>
+                        </div>
+                        <div class="section-content" id="emergency-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">紧急联系人</label>
+                                    <input type="text" class="form-input" placeholder="请输入紧急联系人姓名">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">与本人关系</label>
+                                    <select class="form-select">
+                                        <option value="">请选择关系</option>
+                                        <option value="parent">父母</option>
+                                        <option value="spouse">配偶</option>
+                                        <option value="child">子女</option>
+                                        <option value="sibling">兄弟姐妹</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">联系电话</label>
+                                    <input type="tel" class="form-input" placeholder="请输入紧急联系电话">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wizard-content" id="wizard-step2" style="display:none;">
+                    <div class="form-section">
+                        <div class="section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>体检时间</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" placeholder="请选择体检时间" onclick="showDatePicker(this)">
+                                        <span class="input-suffix" onclick="showDatePicker(this.previousElementSibling)">📅</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>体检机构</label>
+                                    <input type="text" class="form-input" placeholder="请输入体检机构">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">📁</div>
+                            <span>体检报告上传</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="upload-area">
+                                <div class="upload-plus">
+                                    <div class="plus-icon">+</div>
+                                </div>
+                                <div class="upload-hint">支持上传PNG、JPG、JPEG、Excel、Word、PDF、Zip格式，文件大小不超过20M</div>
+                            </div>
+                            <div class="upload-list" id="upload-list-2">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📄</div>
+                                    <div class="empty-text">暂无上传文件</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wizard-content" id="wizard-step3" style="display:none;">
+                    <div class="form-section">
+                        <div class="section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">培训名称</label>
+                                    <input type="text" class="form-input" placeholder="请输入培训名称">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">培训结果</label>
+                                    <select class="form-select">
+                                        <option value="qualified">合格</option>
+                                        <option value="unqualified">不合格</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">培训合格证书号</label>
+                                    <input type="text" class="form-input" placeholder="请输入培训合格证书号">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">培训地点</label>
+                                    <input type="text" class="form-input" placeholder="请输入培训地点">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">培训合格证号</label>
+                                    <input type="text" class="form-input" placeholder="请输入培训合格证号">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">培训开始日期</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" placeholder="请选择培训开始日期" onclick="showDatePicker(this)">
+                                        <span class="input-suffix" onclick="showDatePicker(this.previousElementSibling)">📅</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">培训方式</label>
+                                    <select class="form-select">
+                                        <option value="">请选择培训方式</option>
+                                        <option value="online">线上培训</option>
+                                        <option value="offline">线下培训</option>
+                                        <option value="mixed">混合培训</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">培训结束日期</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" placeholder="请选择培训结束日期" onclick="showDatePicker(this)">
+                                        <span class="input-suffix" onclick="showDatePicker(this.previousElementSibling)">📅</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">培训学时</label>
+                                    <input type="number" class="form-input" placeholder="请输入培训学时" value="72">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">培训类型</label>
+                                    <select class="form-select">
+                                        <option value="pre-job">岗前培训</option>
+                                        <option value="regular">定期培训</option>
+                                        <option value="special">专项培训</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">培训内容</label>
+                                    <textarea class="form-textarea" placeholder="请输入培训内容" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">📁</div>
+                            <span>培训证书附件</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="upload-multi">
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="upload-hint">支持上传pdf和图片，最多上传5个，单个文件不超过5M</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wizard-content" id="wizard-step4" style="display:none;">
+                    <div class="form-section">
+                        <div class="section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">开始日期</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" placeholder="请选择开始日期" onclick="showDatePicker(this)">
+                                        <span class="input-suffix" onclick="showDatePicker(this.previousElementSibling)">📅</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">结束日期</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" placeholder="请选择结束日期" onclick="showDatePicker(this)">
+                                        <span class="input-suffix" onclick="showDatePicker(this.previousElementSibling)">📅</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">📁</div>
+                            <span>合同文件上传</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="upload-multi">
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="upload-hint">支持上传pdf和图片，最多上传5个，单个文件不超过20M</div>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+                <div class="wizard-content" id="wizard-step5" style="display:none;">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">📝</div>
+                            <span>报备信息</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>报备日期</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" placeholder="请选择报备日期" onclick="showDatePicker(this)">
+                                        <span class="input-suffix" onclick="showDatePicker(this.previousElementSibling)">📅</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><span class="required">*</span>报备人</label>
+                                    <input type="text" class="form-input" placeholder="请输入报备人">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">报备方式</label>
+                                    <select class="form-select">
+                                        <option value="online">线上报备</option>
+                                        <option value="offline">线下报备</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">报备状态</label>
+                                    <select class="form-select" disabled>
+                                        <option value="pending">待审核</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">📁</div>
+                            <span>报备附件</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="upload-multi">
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                                <div class="upload-item" onclick="addUploadItem(this)">
+                                    <div class="upload-plus-mini">
+                                        <div class="plus-icon-mini">+</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="upload-hint">支持上传pdf和图片，最多上传5个，单个文件不超过20M</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wizard-content" id="wizard-step6" style="display:none;">
+                    <div class="summary-section">
+                        <div class="summary-header">
+                            <div class="summary-icon">✅</div>
+                            <div class="summary-info">
+                                <div class="summary-title">入职信息确认</div>
+                                <div class="summary-desc">请仔细核对以下信息，确认无误后提交入职申请</div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-group">
+                            <div class="summary-group-title">👤 身份信息</div>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span class="summary-label">人员姓名</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">身份证号</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">性别</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">出生日期</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">联系电话</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">健康状态</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-group">
+                            <div class="summary-group-title">💼 工作信息</div>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span class="summary-label">所属企业</span>
+                                    <span class="summary-value">西山煤电集团</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">所属部门</span>
+                                    <span class="summary-value">待选择</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">工种</span>
+                                    <span class="summary-value">待选择</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">岗位</span>
+                                    <span class="summary-value">待选择</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">入职日期</span>
+                                    <span class="summary-value">待选择</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">用工形式</span>
+                                    <span class="summary-value">待选择</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-group">
+                            <div class="summary-group-title">🏥 体检信息</div>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span class="summary-label">体检时间</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">体检机构</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">体检报告</span>
+                                    <span class="summary-value">待上传</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-group">
+                            <div class="summary-group-title">📚 培训信息</div>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span class="summary-label">培训名称</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">培训结果</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">培训学时</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">培训类型</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">培训证书号</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">培训附件</span>
+                                    <span class="summary-value">待上传</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-group">
+                            <div class="summary-group-title">📝 合同与报备</div>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span class="summary-label">合同开始日期</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">合同结束日期</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">合同文件</span>
+                                    <span class="summary-value">待上传</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">报备日期</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">报备人</span>
+                                    <span class="summary-value">待填写</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">报备状态</span>
+                                    <span class="summary-value">待审核</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="confirm-checkbox">
+                            <input type="checkbox" id="confirm-check">
+                            <label for="confirm-check">我已仔细核对以上信息，确认所有信息真实准确</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-secondary" id="prev-btn" onclick="prevWizardStep()" style="display:none;">上一步</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextWizardStep()">下一步</button>
+                <button class="btn btn-primary" id="submit-btn" onclick="submitForm()" style="display:none;">提交入职</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        function switchPage(page, title, subtitle, element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.submenu-item').forEach(item => item.classList.remove('active'));
+            if (element) {
+                if (element.classList.contains('submenu-item')) {
+                    element.classList.add('active');
+                    element.parentElement.classList.add('show');
+                    element.parentElement.previousElementSibling.classList.add('active');
+                } else {
+                    element.classList.add('active');
+                }
+            }
+            
+            document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            
+            document.getElementById('pageTitle').textContent = title;
+            document.getElementById('pageSubtitle').textContent = subtitle;
+        }
+
+        function toggleSubmenu(submenuId, element) {
+            const submenu = document.getElementById(submenuId);
+            submenu.classList.toggle('show');
+            element.classList.toggle('active');
+        }
+
+        function showConfigTab(tab) {
+            document.querySelectorAll('.config-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.config-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('config-' + tab).classList.add('active');
+        }
+
+        function showOnboardModal() {
+            document.getElementById('modal-overlay').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('show');
+        }
+
+        function submitForm() {
+            showToast('success', '入职申请提交成功');
+            closeModal();
+        }
+
+        let currentStep = 1;
+
+        function setWizardStep(step) {
+            document.getElementById('wizard-step' + currentStep).style.display = 'none';
+            document.getElementById('wizard-step' + step).style.display = 'block';
+            
+            document.querySelectorAll('.wizard-step').forEach((s, index) => {
+                s.classList.remove('active');
+                if (index < step - 1) {
+                    s.classList.add('completed');
+                } else if (index === step - 1) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                } else {
+                    s.classList.remove('completed');
+                }
+            });
+            
+            currentStep = step;
+            updateWizardButtons();
+        }
+
+        function nextWizardStep() {
+            if (currentStep < 6) {
+                setWizardStep(currentStep + 1);
+            }
+        }
+
+        function prevWizardStep() {
+            if (currentStep > 1) {
+                setWizardStep(currentStep - 1);
+            }
+        }
+
+        function updateWizardButtons() {
+            document.getElementById('prev-btn').style.display = currentStep > 1 ? 'block' : 'none';
+            document.getElementById('next-btn').style.display = currentStep < 6 ? 'block' : 'none';
+            document.getElementById('submit-btn').style.display = currentStep === 6 ? 'block' : 'none';
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const header = section.parentElement.previousElementSibling || section.parentElement.closest('.form-section').querySelector('.section-header');
+            const arrow = header.querySelector('.section-arrow');
+            const formSection = header.parentElement;
+            
+            if (formSection.classList.contains('expandable')) {
+                formSection.classList.toggle('active');
+                arrow.style.transform = formSection.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+            } else {
+                if (section.style.display === 'none' || !section.style.display) {
+                    section.style.display = 'block';
+                    arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    section.style.display = 'none';
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        function autoFillFromIdCard(input) {
+            const idCard = input.value.trim();
+            if (idCard.length === 18) {
+                const gender = parseInt(idCard.charAt(16)) % 2 === 1 ? '男' : '女';
+                const birthDate = idCard.substring(6, 10) + '-' + idCard.substring(10, 12) + '-' + idCard.substring(12, 14);
+                
+                const genderSelect = document.getElementById('gender-select');
+                const birthInput = document.getElementById('birth-date-input');
+                
+                if (genderSelect) {
+                    Array.from(genderSelect.options).forEach(opt => {
+                        if (opt.text === gender) {
+                            genderSelect.selectedIndex = opt.index;
+                        }
+                    });
+                }
+                if (birthInput && !birthInput.value) {
+                    birthInput.value = birthDate;
+                }
+            }
+        }
+
+        function updateWorkTypeOptions(select) {
+            const workTypeSelect = document.getElementById('work-type-select');
+            if (!workTypeSelect) return;
+            
+            const workTypes = {
+                'work1': ['井下采煤工', '井下掘进工', '井下机电工', '井下安全员'],
+                'work2': ['地面操作工', '地面维修工', '仓库管理员', '后勤人员'],
+                'work3': ['项目经理', '安全主管', '生产经理', '技术总监'],
+                'work4': ['工程师', '技术员', '质检员', '培训师']
+            };
+            
+            const selectedValue = select.value;
+            workTypeSelect.innerHTML = '';
+            
+            if (selectedValue && workTypes[selectedValue]) {
+                workTypes[selectedValue].forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    workTypeSelect.appendChild(option);
+                });
+            } else {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = '请先选择工种';
+                workTypeSelect.appendChild(option);
+            }
+        }
+
+        function showDatePicker(input) {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            input.value = dateStr;
+        }
+
+        let certIdCounter = 1;
+        
+        function addCertificate() {
+            const certList = document.getElementById('cert-list');
+            const emptyState = certList.querySelector('.empty-state');
+            if (emptyState) {
+                certList.removeChild(emptyState);
+            }
+            
+            const certItem = document.createElement('div');
+            certItem.className = 'cert-item';
+            certItem.innerHTML = `
+                <div class="form-grid" style="gap: 12px;">
+                    <div class="form-item" style="flex: 1;">
+                        <label>证书名称</label>
+                        <input type="text" class="form-input" placeholder="请输入证书名称">
+                    </div>
+                    <div class="form-item" style="flex: 1;">
+                        <label>证书编号</label>
+                        <input type="text" class="form-input" placeholder="请输入证书编号">
+                    </div>
+                    <div class="form-item" style="flex: 1;">
+                        <label>有效期至</label>
+                        <input type="text" class="form-input" placeholder="请选择有效期" onclick="showDatePicker(this)">
+                    </div>
+                    <div class="form-item" style="flex: 0 0 40px; align-items: flex-end;">
+                        <button class="btn btn-danger btn-sm" onclick="removeCertificate(this)">删除</button>
+                    </div>
+                </div>
+            `;
+            certList.appendChild(certItem);
+        }
+
+        function addUploadItem(el) {
+            showToast('请选择文件', 'info');
+        }
+        
+        function removeCertificate(btn) {
+            const certItem = btn.closest('.cert-item');
+            certItem.remove();
+            
+            const certList = document.getElementById('cert-list');
+            if (certList.children.length === 0) {
+                certList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <div class="empty-text">暂无证书信息</div>
+                        <div class="empty-hint">点击下方按钮添加资格证书</div>
+                    </div>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateWizardButtons();
+            
+            document.querySelectorAll('.expandable').forEach(section => {
+                const content = section.querySelector('.section-content');
+                if (content) {
+                    content.style.display = 'none';
+                }
+                const arrow = section.querySelector('.section-arrow');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            document.querySelectorAll('.form-section:not(.expandable)').forEach(section => {
+                const content = section.querySelector('.section-content');
+                if (content) {
+                    content.style.display = 'block';
+                }
+                const arrow = section.querySelector('.section-arrow');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        function showBatchImport() {
+            showToast('info', '批量导入功能开发中');
+        }
+
+        function refreshTable() {
+            showToast('success', '数据刷新成功');
+        }
+
+        function batchSubmit() {
+            showToast('success', '批量提交入职成功');
+        }
+
+        function batchCancel() {
+            showToast('success', '批量取消入职成功');
+        }
+
+        function showImportModal() {
+            showToast('info', '导入功能开发中');
+        }
+
+        function exportData() {
+            showToast('success', '数据导出成功');
+        }
+
+        function exportReviewData() {
+            showToast('success', '预审结果导出成功');
+        }
+
+        function selectAll() {
+            const checkboxes = document.querySelectorAll('.data-table input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = event.target.checked);
+        }
+
+        function showToast(type, message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast toast-' + type;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
