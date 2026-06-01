@@ -83,7 +83,10 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary)}
 .btn-outline:hover{background:var(--primary-bg)}
-.status-badge{display:inline-block;padding:4px 10px;border-radius:16px;font-size:11px;font-weight:500}
+.status-badge,.type-badge{display:inline-block;padding:4px 10px;border-radius:16px;font-size:11px;font-weight:500}
+.type-directory{background:rgba(139,92,246,.1);color:#8b5cf6}
+.type-menu{background:rgba(34,197,94,.1);color:#22c55e}
+.type-permission{background:rgba(236,72,153,.1);color:#ec4899}
 .status-active{background:var(--success-bg);color:var(--success)}
 .status-pending{background:rgba(245,158,11,.1);color:var(--warning)}
 .status-inactive{background:rgba(138,154,170,.1);color:var(--text-muted)}
@@ -3024,11 +3027,13 @@ input[type="radio"]{cursor:pointer}
                         </div>
                         <div class="menu-list-toolbar">
                             <button class="btn btn-primary" onclick="showMenuForm('add-root')">新增一级菜单</button>
+                            <button class="btn btn-secondary" onclick="exportMenuData()">导出菜单</button>
                         </div>
                         <table class="maintenance-tree-table">
                             <thead>
                                 <tr>
                                     <th>模块 / 菜单功能</th>
+                                    <th>类型</th>
                                     <th>层级</th>
                                     <th>父级菜单</th>
                                     <th>路由</th>
@@ -3038,77 +3043,85 @@ input[type="radio"]{cursor:pointer}
                                 </tr>
                             </thead>
                             <tbody id="maintenanceMenuBody">
-                                <tr data-menu-id="workbench" data-menu-name="工作台" data-level="1" data-parent-id="" data-parent-name="-" data-route="/enterprise/workbench" data-sort="10" data-status="启用">
+                                <tr data-menu-id="workbench" data-menu-name="工作台" data-type="menu" data-level="1" data-parent-id="" data-parent-name="-" data-route="/enterprise/workbench" data-sort="10" data-status="启用">
                                     <td><div class="tree-cell tree-indent-0"><span class="tree-expander">▾</span><span class="tree-node-main">工作台</span><span class="tree-node-meta">一级</span></div></td>
+                                    <td><span class="type-badge type-menu">菜单</span></td>
                                     <td>一级菜单</td>
                                     <td>-</td>
                                     <td>/enterprise/workbench</td>
                                     <td>10</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
-                                <tr data-menu-id="staff" data-menu-name="人员台账" data-level="2" data-parent-id="workbench" data-parent-name="工作台" data-route="/enterprise/staff" data-sort="10" data-status="启用">
+                                <tr data-menu-id="staff" data-menu-name="人员台账" data-type="menu" data-level="2" data-parent-id="workbench" data-parent-name="工作台" data-route="/enterprise/staff" data-sort="10" data-status="启用">
                                     <td><div class="tree-cell tree-indent-1"><span class="tree-expander">▾</span><span class="tree-node-main">人员台账</span><span class="tree-node-meta">二级</span></div></td>
+                                    <td><span class="type-badge type-menu">菜单</span></td>
                                     <td>二级菜单</td>
                                     <td>工作台</td>
                                     <td>/enterprise/staff</td>
                                     <td>10</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
-                                <tr data-menu-id="staff-active" data-menu-name="在职人员" data-level="3" data-parent-id="staff" data-parent-name="人员台账" data-route="/enterprise/staff/active" data-sort="10" data-status="启用">
+                                <tr data-menu-id="staff-active" data-menu-name="在职人员" data-type="menu" data-level="3" data-parent-id="staff" data-parent-name="人员台账" data-route="/enterprise/staff/active" data-sort="10" data-status="启用">
                                     <td><div class="tree-cell tree-indent-2"><span class="tree-expander leaf"></span><span class="tree-node-child">在职人员</span><span class="tree-node-meta">三级</span></div></td>
+                                    <td><span class="type-badge type-menu">菜单</span></td>
                                     <td>三级菜单</td>
                                     <td>人员台账</td>
                                     <td>/enterprise/staff/active</td>
                                     <td>10</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
-                                <tr data-menu-id="staff-resigned" data-menu-name="离职人员" data-level="3" data-parent-id="staff" data-parent-name="人员台账" data-route="/enterprise/staff/resigned" data-sort="20" data-status="启用">
+                                <tr data-menu-id="staff-resigned" data-menu-name="离职人员" data-type="menu" data-level="3" data-parent-id="staff" data-parent-name="人员台账" data-route="/enterprise/staff/resigned" data-sort="20" data-status="启用">
                                     <td><div class="tree-cell tree-indent-2"><span class="tree-expander leaf"></span><span class="tree-node-child">离职人员</span><span class="tree-node-meta">三级</span></div></td>
+                                    <td><span class="type-badge type-menu">菜单</span></td>
                                     <td>三级菜单</td>
                                     <td>人员台账</td>
                                     <td>/enterprise/staff/resigned</td>
                                     <td>20</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
-                                <tr data-menu-id="training" data-menu-name="培训记录" data-level="2" data-parent-id="workbench" data-parent-name="工作台" data-route="/enterprise/training" data-sort="20" data-status="启用">
+                                <tr data-menu-id="training" data-menu-name="培训记录" data-type="menu" data-level="2" data-parent-id="workbench" data-parent-name="工作台" data-route="/enterprise/training" data-sort="20" data-status="启用">
                                     <td><div class="tree-cell tree-indent-1"><span class="tree-expander">▾</span><span class="tree-node-main">培训记录</span><span class="tree-node-meta">二级</span></div></td>
+                                    <td><span class="type-badge type-menu">菜单</span></td>
                                     <td>二级菜单</td>
                                     <td>工作台</td>
                                     <td>/enterprise/training</td>
                                     <td>20</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
-                                <tr data-menu-id="training-yearly" data-menu-name="年度培训台账" data-level="3" data-parent-id="training" data-parent-name="培训记录" data-route="/enterprise/training/yearly" data-sort="10" data-status="启用">
+                                <tr data-menu-id="training-yearly" data-menu-name="年度培训台账" data-type="menu" data-level="3" data-parent-id="training" data-parent-name="培训记录" data-route="/enterprise/training/yearly" data-sort="10" data-status="启用">
                                     <td><div class="tree-cell tree-indent-2"><span class="tree-expander leaf"></span><span class="tree-node-child">年度培训台账</span><span class="tree-node-meta">三级</span></div></td>
+                                    <td><span class="type-badge type-menu">菜单</span></td>
                                     <td>三级菜单</td>
                                     <td>培训记录</td>
                                     <td>/enterprise/training/yearly</td>
                                     <td>10</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
-                                <tr data-menu-id="safety" data-menu-name="安全生产" data-level="1" data-parent-id="" data-parent-name="-" data-route="/enterprise/safety" data-sort="30" data-status="启用">
-                                    <td><div class="tree-cell tree-indent-0"><span class="tree-expander">▾</span><span class="tree-node-main">安全生产</span><span class="tree-node-meta">一级</span></div></td>
-                                    <td>一级菜单</td>
+                                <tr data-menu-id="safety" data-menu-name="安全生产" data-type="directory" data-level="1" data-parent-id="" data-parent-name="-" data-route="" data-sort="30" data-status="启用">
+                                    <td><div class="tree-cell tree-indent-0"><span class="tree-expander">▾</span><span class="tree-node-main">安全生产</span><span class="tree-node-meta">目录</span></div></td>
+                                    <td><span class="type-badge type-directory">目录</span></td>
+                                    <td>一级目录</td>
                                     <td>-</td>
-                                    <td>/enterprise/safety</td>
+                                    <td>-</td>
                                     <td>30</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
-                                <tr data-menu-id="safety-risk" data-menu-name="隐患排查" data-level="2" data-parent-id="safety" data-parent-name="安全生产" data-route="/enterprise/safety/risk" data-sort="10" data-status="启用">
+                                <tr data-menu-id="safety-risk" data-menu-name="隐患排查" data-type="menu" data-level="2" data-parent-id="safety" data-parent-name="安全生产" data-route="/enterprise/safety/risk" data-sort="10" data-status="启用">
                                     <td><div class="tree-cell tree-indent-1"><span class="tree-expander leaf"></span><span class="tree-node-child">隐患排查</span><span class="tree-node-meta">二级</span></div></td>
+                                    <td><span class="type-badge type-menu">菜单</span></td>
                                     <td>二级菜单</td>
                                     <td>安全生产</td>
                                     <td>/enterprise/safety/risk</td>
                                     <td>10</td>
                                     <td><span class="status-badge status-enabled">启用</span></td>
-                                    <td><span class="action-link" onclick="showMenuForm('add-child',this)">新增子菜单</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
+                                    <td><span class="action-link" onclick="showMenuDetail(this)">查看</span><span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="action-link danger" onclick="toggleMaintenanceMenuStatus(this)">禁用</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -5177,25 +5190,42 @@ input[type="radio"]{cursor:pointer}
                     <div class="info-item"><span class="info-label">当前模块</span><span class="info-value" id="menuFormSubsystem">宣教培训</span></div>
                     <div class="info-item"><span class="info-label">当前层级</span><span class="info-value" id="menuFormLevelText">模块</span></div>
                 </div>
-                <div class="form-row">
+                <div class="form-row" id="menuFormRowType">
+                    <div class="form-group">
+                        <label class="form-label">类型 *</label>
+                        <select class="form-select" id="menuFormType" onchange="syncMenuFormType()">
+                            <option value="directory">目录</option>
+                            <option value="menu">菜单</option>
+                            <option value="permission">操作</option>
+                        </select>
+                        <div class="form-hint">目录：菜单分类，无需配置路由；菜单：可访问的页面；操作：按钮级别的权限控制点</div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">父级节点</label>
                         <select class="form-select" id="menuFormParent" onchange="syncMenuFormLevel()">
-                            <option value="">作为当前模块下的一级菜单</option>
+                            <option value="">作为当前模块下的一级节点</option>
                         </select>
                         <div class="form-error" id="menuFormParentError">父级节点选择不合法</div>
                     </div>
+                </div>
+                <div class="form-row" id="menuFormRowName">
                     <div class="form-group">
-                        <label class="form-label">菜单名称 *</label>
-                        <input type="text" class="form-input" id="menuFormName" placeholder="请输入菜单名称">
-                        <div class="form-error" id="menuFormNameError">请输入菜单名称</div>
+                        <label class="form-label">名称 *</label>
+                        <input type="text" class="form-input" id="menuFormName" placeholder="请输入名称">
+                        <div class="form-error" id="menuFormNameError">请输入名称</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">权限标识</label>
+                        <input type="text" class="form-input" id="menuFormPermission" placeholder="如：system:menu:view">
+                        <div class="form-hint">用于权限控制的唯一标识，建议使用冒号分隔的层级格式</div>
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="form-row" id="menuFormRowRoute">
                     <div class="form-group">
-                        <label class="form-label">路由路径 *</label>
+                        <label class="form-label">路由路径</label>
                         <input type="text" class="form-input" id="menuFormRoute" placeholder="如：/enterprise/workbench">
                         <div class="form-error" id="menuFormRouteError">请输入以 / 开头的唯一路由</div>
+                        <div class="form-hint" id="menuFormRouteHint">目录类型无需配置路由</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">菜单状态</label>
@@ -5205,24 +5235,81 @@ input[type="radio"]{cursor:pointer}
                         </select>
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="form-row" id="menuFormRowSort">
                     <div class="form-group">
                         <label class="form-label">排序 *</label>
                         <input type="number" class="form-input" id="menuFormSort" min="1" step="1" placeholder="请输入正整数">
                         <div class="form-error" id="menuFormSortError">排序必须为正整数</div>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">菜单描述</label>
-                        <textarea class="form-input" id="menuFormDesc" rows="3" placeholder="请输入菜单描述，用于说明菜单功能和用途"></textarea>
-                        <div class="form-hint">菜单描述将在权限配置等场景中显示，帮助用户理解菜单用途。</div>
+                        <label class="form-label">图标</label>
+                        <input type="text" class="form-input" id="menuFormIcon" placeholder="图标类名，如：el-icon-menu">
+                        <div class="form-hint">使用 Element Plus 图标类名</div>
+                    </div>
+                </div>
+                <div class="form-row" id="menuFormRowDesc">
+                    <div class="form-group">
+                        <label class="form-label">描述</label>
+                        <textarea class="form-input" id="menuFormDesc" rows="3" placeholder="请输入描述，用于说明功能和用途"></textarea>
+                        <div class="form-hint">描述将在权限配置等场景中显示，帮助用户理解用途。</div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="hideModal('menuFormModal')">取消</button>
                 <button class="btn btn-primary" onclick="saveMenuForm()">保存菜单</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="menuDetailModal">
+        <div class="modal modal-md">
+            <div class="modal-header">
+                <span class="modal-title">菜单详情</span>
+                <button class="modal-close" onclick="hideModal('menuDetailModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">菜单名称</span>
+                        <span class="detail-value" id="detailMenuName">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">类型</span>
+                        <span class="detail-value" id="detailMenuType">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">层级</span>
+                        <span class="detail-value" id="detailMenuLevel">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">父级菜单</span>
+                        <span class="detail-value" id="detailParentName">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">路由路径</span>
+                        <span class="detail-value" id="detailMenuRoute">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">权限标识</span>
+                        <span class="detail-value" id="detailMenuPermission">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">排序</span>
+                        <span class="detail-value" id="detailMenuSort">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">状态</span>
+                        <span class="detail-value" id="detailMenuStatus">-</span>
+                    </div>
+                    <div class="detail-item detail-full">
+                        <span class="detail-label">菜单描述</span>
+                        <span class="detail-value" id="detailMenuDesc">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="hideModal('menuDetailModal')">关闭</button>
             </div>
         </div>
     </div>
@@ -7552,25 +7639,31 @@ function renderMenuNameCell(name, level, hasChildren) {
 function refreshMenuParentIndicators() {
     getMaintenanceRows().forEach(row => {
         const nameCell = row.children[0];
-        nameCell.innerHTML = renderMenuNameCell(row.dataset.menuName, Number(row.dataset.level), hasMenuChildren(row));
-        row.children[1].textContent = getMenuLevelName(Number(row.dataset.level));
-        row.children[2].textContent = row.dataset.parentName || '-';
-        row.children[3].textContent = row.dataset.route;
-        row.children[4].textContent = row.dataset.sort;
-        row.children[5].innerHTML = `<span class="status-badge ${row.dataset.status === '启用' ? 'status-enabled' : 'status-disabled'}">${row.dataset.status}</span>`;
-        row.children[6].innerHTML = renderMaintenanceMenuActions(row);
+        const type = row.dataset.type || 'menu';
+        const level = Number(row.dataset.level);
+        const canAddChild = type !== 'permission' && level < 3;
+        
+        const typeBadge = type === 'directory' ? '<span class="type-badge type-directory">目录</span>' : 
+                         type === 'permission' ? '<span class="type-badge type-permission">权限</span>' : 
+                         '<span class="type-badge type-menu">菜单</span>';
+        
+        nameCell.innerHTML = renderMenuNameCell(row.dataset.menuName, level, hasMenuChildren(row), type);
+        row.children[1].innerHTML = typeBadge;
+        row.children[2].textContent = type === 'directory' ? '一级目录' : getMenuLevelName(level);
+        row.children[3].textContent = row.dataset.parentName || '-';
+        row.children[4].textContent = type === 'directory' ? '-' : (row.dataset.route || '-');
+        row.children[5].textContent = row.dataset.sort;
+        row.children[6].innerHTML = `<span class="status-badge ${row.dataset.status === '启用' ? 'status-enabled' : 'status-disabled'}">${row.dataset.status}</span>`;
+        row.children[7].innerHTML = renderMaintenanceMenuActions(row.dataset.status, canAddChild);
         row.classList.toggle('maintenance-menu-row-disabled', row.dataset.status === '停用');
     });
 }
 
-function renderMaintenanceMenuActions(row) {
-    const status = row.dataset.status;
-    const level = Number(row.dataset.level);
-    const canAddChild = status === '启用' && level < maxMenuLevel;
+function renderMaintenanceMenuActions(status, canAddChild) {
     const childAction = canAddChild ? '<span class="action-link" onclick="showMenuForm(\'add-child\',this)">新增子菜单</span>' : '';
     const toggleText = status === '启用' ? '禁用' : '启用';
     const toggleClass = status === '启用' ? 'action-link danger' : 'action-link';
-    return `${childAction}<span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="${toggleClass}" onclick="toggleMaintenanceMenuStatus(this)">${toggleText}</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span>`;
+    return `<span class="action-link" onclick="showMenuDetail(this)">查看</span>${childAction}<span class="action-link" onclick="showMenuForm('edit',this)">编辑</span><span class="${toggleClass}" onclick="toggleMaintenanceMenuStatus(this)">${toggleText}</span><span class="action-link danger" onclick="deleteMaintenanceMenu(this)">删除</span>`;
 }
 
 function populateMenuParentOptions(selectedParentId = '', editingRow = null) {
@@ -7609,12 +7702,56 @@ function showMenuForm(mode, actionEl) {
 
     document.getElementById('menuFormSubsystem').textContent = document.getElementById('menuMaintenanceSubsystem').textContent;
     document.getElementById('menuFormTitle').textContent = mode === 'edit' ? '编辑菜单' : (mode === 'add-child' ? '新增子菜单' : '新增一级菜单');
+    
+    const menuType = currentMenuEditRow ? currentMenuEditRow.dataset.type || 'menu' : 'menu';
+    document.getElementById('menuFormType').value = menuType;
     document.getElementById('menuFormName').value = currentMenuEditRow ? currentMenuEditRow.dataset.menuName : '';
+    document.getElementById('menuFormPermission').value = currentMenuEditRow ? currentMenuEditRow.dataset.permission || '' : '';
     document.getElementById('menuFormRoute').value = currentMenuEditRow ? currentMenuEditRow.dataset.route : '';
     document.getElementById('menuFormSort').value = currentMenuEditRow ? currentMenuEditRow.dataset.sort : '10';
     document.getElementById('menuFormStatus').value = currentMenuEditRow ? currentMenuEditRow.dataset.status : '启用';
+    document.getElementById('menuFormIcon').value = currentMenuEditRow ? currentMenuEditRow.dataset.icon || '' : '';
+    document.getElementById('menuFormDesc').value = currentMenuEditRow ? currentMenuEditRow.dataset.desc || '' : '';
+    
+    syncMenuFormType();
     syncMenuFormLevel();
     document.getElementById('menuFormModal').classList.add('show');
+}
+
+function syncMenuFormType() {
+    const type = document.getElementById('menuFormType').value;
+    const isPermission = type === 'permission';
+    
+    if (isPermission) {
+        document.getElementById('menuFormRowType').style.display = 'none';
+        document.getElementById('menuFormRowRoute').style.display = 'none';
+        
+        const permissionField = document.getElementById('menuFormPermission').parentElement;
+        permissionField.style.display = 'none';
+        
+        const iconField = document.getElementById('menuFormIcon').parentElement;
+        iconField.style.display = 'none';
+    } else {
+        document.getElementById('menuFormRowType').style.display = '';
+        document.getElementById('menuFormRowRoute').style.display = '';
+        
+        const permissionField = document.getElementById('menuFormPermission').parentElement;
+        permissionField.style.display = '';
+        
+        const iconField = document.getElementById('menuFormIcon').parentElement;
+        iconField.style.display = '';
+        
+        const routeGroup = document.getElementById('menuFormRoute').parentElement.parentElement;
+        const routeHint = document.getElementById('menuFormRouteHint');
+        
+        if (type === 'directory') {
+            routeGroup.style.display = 'none';
+            routeHint.style.display = 'none';
+        } else {
+            routeGroup.style.display = '';
+            routeHint.style.display = 'block';
+        }
+    }
 }
 
 function syncMenuFormLevel() {
@@ -7687,16 +7824,35 @@ function validateMenuForm() {
 function createMaintenanceMenuRow(data) {
     const row = document.createElement('tr');
     Object.entries(data).forEach(([key, value]) => row.dataset[key] = String(value));
+    
+    const type = data.type || 'menu';
+    const typeBadge = type === 'directory' ? '<span class="type-badge type-directory">目录</span>' : 
+                     type === 'permission' ? '<span class="type-badge type-permission">权限</span>' : 
+                     '<span class="type-badge type-menu">菜单</span>';
+    
+    const levelName = type === 'directory' ? `一级目录` : getMenuLevelName(Number(data.level));
+    const routeDisplay = type === 'directory' ? '-' : (data.route || '-');
+    const canAddChild = type !== 'permission' && Number(data.level) < 3;
+    
     row.innerHTML = `
-        <td>${renderMenuNameCell(data.menuName, Number(data.level), false)}</td>
-        <td>${getMenuLevelName(Number(data.level))}</td>
+        <td>${renderMenuNameCell(data.menuName, Number(data.level), false, type)}</td>
+        <td>${typeBadge}</td>
+        <td>${levelName}</td>
         <td>${data.parentName || '-'}</td>
-        <td>${data.route}</td>
+        <td>${routeDisplay}</td>
         <td>${data.sort}</td>
         <td><span class="status-badge ${data.status === '启用' ? 'status-enabled' : 'status-disabled'}">${data.status}</span></td>
-        <td></td>
+        <td>${renderMaintenanceMenuActions(data.status, canAddChild)}</td>
     `;
     return row;
+}
+
+function renderMenuNameCell(name, level, isPreview, type = 'menu') {
+    const indent = Math.min(level - 1, 3);
+    const expander = type === 'directory' || (type === 'menu' && level < 3) ? '<span class="tree-expander">▾</span>' : '<span class="tree-expander leaf"></span>';
+    const nodeClass = type === 'directory' ? 'tree-node-main' : level === 1 ? 'tree-node-main' : 'tree-node-child';
+    const metaText = type === 'directory' ? '目录' : `第${level}级`;
+    return `<div class="tree-cell tree-indent-${indent}">${expander}<span class="${nodeClass}">${name}</span><span class="tree-node-meta">${metaText}</span></div>`;
 }
 
 function renderMaintenanceMenuRows(productName) {
@@ -7749,13 +7905,18 @@ function saveMenuForm() {
     const parentId = parentSelect.value;
     const parentRow = parentId ? getMaintenanceRows().find(row => row.dataset.menuId === parentId) : null;
     const parentLevel = parentRow ? Number(parentRow.dataset.level) : 0;
+    const menuType = document.getElementById('menuFormType').value;
     const data = {
         menuId: currentMenuEditRow ? currentMenuEditRow.dataset.menuId : 'menu-' + Date.now(),
         menuName: document.getElementById('menuFormName').value.trim(),
+        type: menuType,
         level: parentLevel + 1,
         parentId,
         parentName: parentRow ? parentRow.dataset.menuName : '-',
-        route: document.getElementById('menuFormRoute').value.trim(),
+        route: menuType === 'directory' ? '' : document.getElementById('menuFormRoute').value.trim(),
+        permission: document.getElementById('menuFormPermission').value.trim(),
+        icon: document.getElementById('menuFormIcon').value.trim(),
+        desc: document.getElementById('menuFormDesc').value.trim(),
         sort: document.getElementById('menuFormSort').value.trim(),
         status: document.getElementById('menuFormStatus').value
     };
@@ -7801,6 +7962,56 @@ function saveMenuForm() {
     refreshMenuParentIndicators();
     searchMaintenanceMenu(false);
     hideModal('menuFormModal');
+}
+
+function showMenuDetail(actionEl) {
+    const row = getMenuRowFromAction(actionEl);
+    if (!row) return;
+    
+    const typeMap = { directory: '目录', menu: '菜单', permission: '权限' };
+    const levelMap = { '1': '一级', '2': '二级', '3': '三级' };
+    
+    document.getElementById('detailMenuName').textContent = row.dataset.menuName || '-';
+    document.getElementById('detailMenuType').textContent = typeMap[row.dataset.type] || '菜单';
+    document.getElementById('detailMenuLevel').textContent = levelMap[row.dataset.level] || '-';
+    document.getElementById('detailParentName').textContent = row.dataset.parentName || '-';
+    document.getElementById('detailMenuRoute').textContent = row.dataset.route || '-';
+    document.getElementById('detailMenuPermission').textContent = row.dataset.permission || '-';
+    document.getElementById('detailMenuSort').textContent = row.dataset.sort || '-';
+    document.getElementById('detailMenuStatus').textContent = row.dataset.status || '-';
+    document.getElementById('detailMenuDesc').textContent = row.dataset.desc || '-';
+    
+    document.getElementById('menuDetailModal').classList.add('show');
+}
+
+function exportMenuData() {
+    const rows = getMaintenanceRows();
+    const exportData = rows.map(row => ({
+        menuId: row.dataset.menuId,
+        menuName: row.dataset.menuName,
+        type: row.dataset.type,
+        level: row.dataset.level,
+        parentId: row.dataset.parentId,
+        parentName: row.dataset.parentName,
+        route: row.dataset.route,
+        permission: row.dataset.permission,
+        sort: row.dataset.sort,
+        status: row.dataset.status,
+        icon: row.dataset.icon,
+        desc: row.dataset.desc
+    }));
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `菜单数据_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast('菜单数据已导出', 'success');
 }
 
 function deleteMaintenanceMenu(actionEl) {
