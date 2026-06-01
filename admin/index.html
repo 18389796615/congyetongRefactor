@@ -6003,26 +6003,6 @@ input[type="radio"]{cursor:pointer}
                         </div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <div class="detail-section" style="height:100%;margin-bottom:0;">
-                            <div class="detail-section-header">
-                                <span class="detail-section-icon">权</span>
-                                <span class="detail-section-title">数据范围授权</span>
-                                <span class="check-all" onclick="setRelationAuthChecks(true)">全选</span>
-                                <span class="check-all" onclick="setRelationAuthChecks(false)">取消全选</span>
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-label"><input type="checkbox" name="relationAuthDomain" value="personnel" checked>人事管理</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationAuthDomain" value="training" checked>宣教培训</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationAuthDomain" value="legal" checked>法律服务</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationAuthDomain" value="safety">安全管理</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationAuthDomain" value="equipment">设备管理</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationAuthDomain" value="finance">财务管理</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="hideModal('addRelationModal')">取消</button>
@@ -8989,9 +8969,6 @@ function showAddRelationModal(type) {
     document.querySelectorAll('input[name="relationTarget"]').forEach(item => {
         item.checked = false;
     });
-    document.querySelectorAll('input[name="relationAuthDomain"]').forEach(item => {
-        item.checked = false;
-    });
     
     // 更新已选择标签
     updateRelationTargetSelection();
@@ -9093,13 +9070,6 @@ function refreshRelationTargets() {
     renderRelationTargetTree(targets);
 }
 
-function setRelationAuthChecks(checked) {
-    document.querySelectorAll('input[name="relationAuthDomain"]').forEach(item => {
-        item.checked = checked;
-    });
-    refreshSelectionSurfaces();
-}
-
 function setRelationTargetChecks(checked) {
     document.querySelectorAll('#relationTargetTree input[type="checkbox"]').forEach(item => {
         item.checked = checked;
@@ -9163,7 +9133,6 @@ function removeRelationTarget(value) {
 function saveSubjectRelation() {
     const group = document.getElementById('relationSourceSubject').value;
     const selectedTargets = document.querySelectorAll('input[name="relationTarget"]:checked');
-    const selectedDomains = document.querySelectorAll('input[name="relationAuthDomain"]:checked');
     
     if (!group) {
         alert('请选择集团主体');
@@ -9175,13 +9144,8 @@ function saveSubjectRelation() {
         return;
     }
     
-    if (selectedDomains.length === 0) {
-        alert('请至少选择一个数据范围');
-        return;
-    }
-    
     hideModal('addRelationModal');
-    showToast('主体关系已保存，系统已按关系生成数据授权', 'success');
+    showToast('主体关系已保存', 'success');
 }
 
 function removeRelation(btnElement) {
