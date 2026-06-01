@@ -295,7 +295,14 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .form-textarea{width:100%;padding:10px 14px;border:1px solid rgba(14,165,233,.2);border-radius:10px;font-size:14px;background:rgba(255,255,255,.8);backdrop-filter:blur(10px);resize:vertical;transition:all .2s}
 .form-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(14,165,233,.1)}
 .form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.form-row.flex-row{display:flex;gap:16px}
 .form-error{font-size:12px;color:var(--danger);margin-top:4px;display:none}
+.region-cascader .form-row{display:flex;gap:12px}
+.region-cascader .form-group{flex:1}
+.region-cascader .form-label{font-size:12px;color:var(--text-secondary);margin-bottom:6px}
+.region-selected{display:flex;align-items:center;padding:10px 14px;background:rgba(14,165,233,.06);border-radius:8px}
+.region-selected-label{font-size:12px;color:var(--text-secondary)}
+.region-selected-value{font-size:13px;color:var(--text-primary);font-weight:500;margin-left:8px}
 .form-input.error,.form-select.error{border-color:var(--danger)}
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000}
 .modal-overlay.show{display:flex}
@@ -6861,12 +6868,31 @@ input[type="radio"]{cursor:pointer}
                                 </div>
                                 <div class="form-group" id="regionSelectGroup" style="display:none;">
                                     <label class="form-label">区域配置</label>
-                                    <div class="region-tree">
-                                        <label class="checkbox-label"><input type="checkbox"><span>华北区域</span></label>
-                                        <label class="checkbox-label"><input type="checkbox"><span>华南区域</span></label>
-                                        <label class="checkbox-label"><input type="checkbox"><span>华东区域</span></label>
-                                        <label class="checkbox-label"><input type="checkbox"><span>西部区域</span></label>
-                                        <label class="checkbox-label"><input type="checkbox"><span>华中区域</span></label>
+                                    <div class="region-cascader">
+                                        <div class="form-row">
+                                            <div class="form-group" style="flex:1;">
+                                                <label class="form-label">省</label>
+                                                <select class="form-select" id="regionProvince" onchange="onProvinceChange()">
+                                                    <option value="">请选择省</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="flex:1;">
+                                                <label class="form-label">市</label>
+                                                <select class="form-select" id="regionCity" onchange="onCityChange()">
+                                                    <option value="">请选择市</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="flex:1;">
+                                                <label class="form-label">县</label>
+                                                <select class="form-select" id="regionDistrict">
+                                                    <option value="">请选择县</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="region-selected" style="margin-top:12px;">
+                                            <span class="region-selected-label">已选区域：</span>
+                                            <span id="regionSelectedText" class="region-selected-value">-</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -11455,9 +11481,138 @@ function toggleRegionConfig(prefix) {
     
     if (dataScope === 'region') {
         regionGroup.style.display = 'block';
+        initRegionCascader();
     } else {
         regionGroup.style.display = 'none';
     }
+}
+
+const regionData = {
+    '北京市': ['东城区', '西城区', '朝阳区', '海淀区', '丰台区', '石景山区'],
+    '上海市': ['黄浦区', '徐汇区', '长宁区', '静安区', '普陀区', '虹口区'],
+    '广东省': ['广州市', '深圳市', '珠海市', '佛山市', '东莞市', '中山市'],
+    '江苏省': ['南京市', '苏州市', '无锡市', '常州市', '镇江市', '扬州市'],
+    '浙江省': ['杭州市', '宁波市', '温州市', '嘉兴市', '湖州市', '绍兴市'],
+    '山东省': ['济南市', '青岛市', '淄博市', '枣庄市', '东营市', '烟台市'],
+    '四川省': ['成都市', '自贡市', '攀枝花市', '泸州市', '德阳市', '绵阳市'],
+    '湖北省': ['武汉市', '黄石市', '十堰市', '宜昌市', '襄阳市', '鄂州市'],
+    '河南省': ['郑州市', '开封市', '洛阳市', '平顶山市', '安阳市', '鹤壁市'],
+    '河北省': ['石家庄市', '唐山市', '秦皇岛市', '邯郸市', '邢台市', '保定市']
+};
+
+function getDistrictByCity(city) {
+    const districts = {
+        '北京市': {
+            '东城区': ['东华门街道', '景山街道', '交道口街道', '安定门街道'],
+            '西城区': ['西长安街街道', '新街口街道', '月坛街道', '展览路街道'],
+            '朝阳区': ['朝外街道', '劲松街道', '呼家楼街道', '三里屯街道'],
+            '海淀区': ['海淀街道', '中关村街道', '学院路街道', '西三旗街道']
+        },
+        '广州市': {
+            '天河区': ['石牌街道', '天河路街道', '员村街道', '车陂街道'],
+            '越秀区': ['洪桥街道', '广卫街道', '北京街道', '六榕街道'],
+            '白云区': ['三元里街道', '松洲街道', '景泰街道', '黄石街道'],
+            '番禺区': ['市桥街道', '沙头街道', '东环街道', '桥南街道']
+        },
+        '深圳市': {
+            '福田区': ['南园街道', '园岭街道', '福田街道', '沙头街道'],
+            '罗湖区': ['桂园街道', '东门街道', '南湖街道', '桂园街道'],
+            '南山区': ['南头街道', '南山街道', '沙河街道', '蛇口街道'],
+            '宝安区': ['新安街道', '西乡街道', '福永街道', '沙井街道']
+        },
+        '杭州市': {
+            '上城区': ['清波街道', '湖滨街道', '小营街道', '望江街道'],
+            '下城区': ['武林街道', '天水街道', '朝晖街道', '潮鸣街道'],
+            '西湖区': ['北山街道', '西溪街道', '翠苑街道', '文新街道'],
+            '拱墅区': ['米市巷街道', '湖墅街道', '小河街道', '和睦街道']
+        },
+        '南京市': {
+            '玄武区': ['梅园新村街道', '新街口街道', '玄武门街道'],
+            '秦淮区': ['夫子庙街道', '秦虹街道', '大光路街道'],
+            '鼓楼区': ['华侨路街道', '宁海路街道', '湖南路街道'],
+            '建邺区': ['南苑街道', '兴隆街道', '江心洲街道']
+        },
+        '武汉市': {
+            '江岸区': ['大智街道', '一元街道', '车站街道'],
+            '江汉区': ['民族街道', '民权街道', '花楼街道'],
+            '硚口区': ['古田街道', '韩家墩街道', '宗关街道'],
+            '汉阳区': ['翠微街道', '建桥街道', '晴川街道']
+        }
+    };
+    return districts[city] || {};
+}
+
+function initRegionCascader() {
+    const provinceSelect = document.getElementById('regionProvince');
+    if (provinceSelect.options.length === 1) {
+        Object.keys(regionData).forEach(province => {
+            const option = document.createElement('option');
+            option.value = province;
+            option.textContent = province;
+            provinceSelect.appendChild(option);
+        });
+    }
+}
+
+function onProvinceChange() {
+    const province = document.getElementById('regionProvince').value;
+    const citySelect = document.getElementById('regionCity');
+    const districtSelect = document.getElementById('regionDistrict');
+    
+    citySelect.innerHTML = '<option value="">请选择市</option>';
+    districtSelect.innerHTML = '<option value="">请选择县</option>';
+    
+    if (province) {
+        regionData[province].forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        });
+    }
+    updateRegionSelectedText();
+}
+
+function onCityChange() {
+    const province = document.getElementById('regionProvince').value;
+    const city = document.getElementById('regionCity').value;
+    const districtSelect = document.getElementById('regionDistrict');
+    
+    districtSelect.innerHTML = '<option value="">请选择县</option>';
+    
+    if (city) {
+        const districts = getDistrictByCity(province)?.[city] || [];
+        if (districts.length > 0) {
+            districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+        } else {
+            const defaultDistricts = ['城区', '郊区', '开发区', '高新区'];
+            defaultDistricts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+        }
+    }
+    updateRegionSelectedText();
+}
+
+function updateRegionSelectedText() {
+    const province = document.getElementById('regionProvince').value;
+    const city = document.getElementById('regionCity').value;
+    const district = document.getElementById('regionDistrict').value;
+    
+    const parts = [];
+    if (province) parts.push(province);
+    if (city) parts.push(city);
+    if (district) parts.push(district);
+    
+    document.getElementById('regionSelectedText').textContent = parts.length > 0 ? parts.join(' - ') : '-';
 }
 
 function getAllPerms() {
