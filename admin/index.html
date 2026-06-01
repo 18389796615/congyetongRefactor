@@ -5965,20 +5965,13 @@ input[type="radio"]{cursor:pointer}
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">关系类型 *</label>
-                        <select class="form-select" id="relationTypeSelect" onchange="onRelationTypeChange()">
+                        <select class="form-select" id="relationTypeSelect">
                             <option value="">请选择关系类型</option>
                             <option value="group-manage">集团管理下属企业</option>
                             <option value="parent-child">上下级关系</option>
                             <option value="cooperation">合作关系</option>
                             <option value="investment">投资关系</option>
                             <option value="affiliate">关联企业</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">关系方向</label>
-                        <select class="form-select" id="relationDirection" onchange="onRelationDirectionChange()">
-                            <option value="one-way" selected>单向</option>
-                            <option value="two-way">双向</option>
                         </select>
                     </div>
                 </div>
@@ -9002,7 +8995,6 @@ function showAddRelationModal(type) {
     
     // 清空表单
     document.getElementById('relationTypeSelect').value = '';
-    document.getElementById('relationDirection').value = 'one-way';
     document.getElementById('relationSourceSubject').value = '';
     
     // 清空多选下拉框
@@ -9014,68 +9006,6 @@ function showAddRelationModal(type) {
     document.getElementById('relationEndDate').value = '';
     
     modal.classList.add('show');
-}
-
-function onRelationTypeChange() {
-    const type = document.getElementById('relationTypeSelect').value;
-    const directionSelect = document.getElementById('relationDirection');
-    const sourceLabel = document.querySelector('label[for="relationSourceSubject"]') || 
-                        document.querySelector('#relationSourceSubject').closest('.form-group').querySelector('.form-label');
-    const targetLabel = document.querySelector('label[for="relationTargetSubject"]') || 
-                        document.querySelector('#relationTargetSubject').closest('.form-group').querySelector('.form-label');
-    
-    if (type === 'parent-child' || type === 'group-manage') {
-        directionSelect.value = 'one-way';
-        directionSelect.disabled = false;
-        if (sourceLabel) sourceLabel.textContent = '上级主体 *';
-        if (targetLabel) targetLabel.textContent = '下级主体 *';
-    } else if (type === 'cooperation') {
-        directionSelect.value = 'two-way';
-        directionSelect.disabled = false;
-        if (sourceLabel) sourceLabel.textContent = '主体A *';
-        if (targetLabel) targetLabel.textContent = '主体B *';
-    } else if (type === 'investment') {
-        directionSelect.value = 'one-way';
-        directionSelect.disabled = false;
-        if (sourceLabel) sourceLabel.textContent = '投资方 *';
-        if (targetLabel) targetLabel.textContent = '被投资方 *';
-    } else if (type === 'affiliate') {
-        directionSelect.value = 'two-way';
-        directionSelect.disabled = false;
-        if (sourceLabel) sourceLabel.textContent = '主体A *';
-        if (targetLabel) targetLabel.textContent = '主体B *';
-    } else {
-        directionSelect.disabled = true;
-        if (sourceLabel) sourceLabel.textContent = '上级主体 *';
-        if (targetLabel) targetLabel.textContent = '下级主体 *';
-    }
-}
-
-function onRelationDirectionChange() {
-    const type = document.getElementById('relationTypeSelect').value;
-    const direction = document.getElementById('relationDirection').value;
-    const sourceLabel = document.querySelector('label[for="relationSourceSubject"]') || 
-                        document.querySelector('#relationSourceSubject').closest('.form-group').querySelector('.form-label');
-    const targetLabel = document.querySelector('label[for="relationTargetSubject"]') || 
-                        document.querySelector('#relationTargetSubject').closest('.form-group').querySelector('.form-label');
-    
-    if (direction === 'two-way') {
-        if (type === 'cooperation') {
-            if (sourceLabel) sourceLabel.textContent = '主体A *';
-            if (targetLabel) targetLabel.textContent = '主体B *';
-        } else if (type === 'affiliate') {
-            if (sourceLabel) sourceLabel.textContent = '主体A *';
-            if (targetLabel) targetLabel.textContent = '主体B *';
-        }
-    } else {
-        if (type === 'parent-child' || type === 'group-manage') {
-            if (sourceLabel) sourceLabel.textContent = '上级主体 *';
-            if (targetLabel) targetLabel.textContent = '下级主体 *';
-        } else if (type === 'investment') {
-            if (sourceLabel) sourceLabel.textContent = '投资方 *';
-            if (targetLabel) targetLabel.textContent = '被投资方 *';
-        }
-    }
 }
 
 function getSubjectListByTypes(types) {
@@ -9234,7 +9164,6 @@ function removeRelationTarget(value) {
 
 function saveSubjectRelation() {
     const type = document.getElementById('relationTypeSelect').value;
-    const direction = document.getElementById('relationDirection').value;
     const source = document.getElementById('relationSourceSubject').value;
     const targetSelect = document.getElementById('relationTargetSubject');
     const selectedTargets = Array.from(targetSelect.options).filter(opt => opt.selected).map(opt => opt.value);
