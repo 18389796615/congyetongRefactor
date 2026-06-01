@@ -5962,45 +5962,81 @@ input[type="radio"]{cursor:pointer}
                 <button class="modal-close" onclick="hideModal('addRelationModal')">✕</button>
             </div>
             <div class="modal-body">
-                <div class="form-row" style="grid-template-columns:1fr;">
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">关系类型 *</label>
-                        <select class="form-select" id="relationTypeSelect" disabled>
-                            <option value="group" selected>集团管理下属企业</option>
+                        <select class="form-select" id="relationTypeSelect" onchange="onRelationTypeChange()">
+                            <option value="">请选择关系类型</option>
+                            <option value="group-manage">集团管理下属企业</option>
+                            <option value="parent-child">上下级关系</option>
+                            <option value="cooperation">合作关系</option>
+                            <option value="investment">投资关系</option>
+                            <option value="affiliate">关联企业</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">关系方向</label>
+                        <select class="form-select" id="relationDirection" onchange="onRelationDirectionChange()">
+                            <option value="one-way" selected>单向</option>
+                            <option value="two-way">双向</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">上级集团 *</label>
-                        <select class="form-select" id="relationSourceSubject" onchange="refreshRelationTargets()">
-                            <option value="">请选择集团主体</option>
-                            <option value="group1">贵州能源集团</option>
-                            <option value="group2">六盘水矿业集团</option>
-                            <option value="group3">贵州XX矿业集团</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">下属企业 *</label>
-                        <div class="multi-select-container" id="relationTargetContainer">
-                            <div class="multi-select-header">
-                                <span class="multi-select-label">已选择 0 个下属企业</span>
-                                <span class="clear-selection" onclick="clearRelationTargets()">清空</span>
-                            </div>
-                            <div class="multi-select-search">
-                                <input type="text" class="form-input" id="relationTargetSearch" placeholder="搜索下属企业..." oninput="filterRelationTargets()">
-                            </div>
-                            <div class="multi-select-list" id="relationTargetList">
-                                <label class="checkbox-label"><input type="checkbox" name="relationTarget" value="ent1" onchange="updateRelationTargetSelection()">贵州XX煤矿有限公司</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationTarget" value="ent2" onchange="updateRelationTargetSelection()">贵州安顺清源煤矿有限公司</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationTarget" value="ent3" onchange="updateRelationTargetSelection()">贵州毕节新源煤矿有限公司</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationTarget" value="ent4" onchange="updateRelationTargetSelection()">贵州XX煤矿科技有限公司</label>
-                                <label class="checkbox-label"><input type="checkbox" name="relationTarget" value="ent5" onchange="updateRelationTargetSelection()">贵州XX职业培训中心</label>
-                            </div>
-                            <div class="selected-items" id="selectedRelationTargets"></div>
+                        <label class="form-label">上级主体 *</label>
+                        <div class="subject-select-wrapper">
+                            <select class="form-select" id="relationSourceSubject" onchange="refreshRelationTargets()">
+                                <option value="">请选择上级主体</option>
+                                <optgroup label="集团">
+                                    <option value="group1">贵州能源集团</option>
+                                    <option value="group2">六盘水矿业集团</option>
+                                    <option value="group3">贵州XX矿业集团</option>
+                                </optgroup>
+                                <optgroup label="企业">
+                                    <option value="ent1">贵州XX煤矿有限公司</option>
+                                    <option value="ent2">贵州安顺清源煤矿有限公司</option>
+                                    <option value="ent3">贵州毕节新源煤矿有限公司</option>
+                                    <option value="ent4">贵州XX煤矿科技有限公司</option>
+                                    <option value="ent5">贵州XX职业培训中心</option>
+                                </optgroup>
+                            </select>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">下级主体 *</label>
+                        <div class="subject-select-wrapper">
+                            <select class="form-select" id="relationTargetSubject" multiple size="5" onchange="updateRelationTargetSelection()">
+                                <optgroup label="集团">
+                                    <option value="group1">贵州能源集团</option>
+                                    <option value="group2">六盘水矿业集团</option>
+                                    <option value="group3">贵州XX矿业集团</option>
+                                </optgroup>
+                                <optgroup label="企业">
+                                    <option value="ent1">贵州XX煤矿有限公司</option>
+                                    <option value="ent2">贵州安顺清源煤矿有限公司</option>
+                                    <option value="ent3">贵州毕节新源煤矿有限公司</option>
+                                    <option value="ent4">贵州XX煤矿科技有限公司</option>
+                                    <option value="ent5">贵州XX职业培训中心</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">关系描述</label>
+                        <textarea class="form-input" id="relationDescription" rows="3" placeholder="请输入关系描述（可选）"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">生效日期</label>
+                        <input type="date" class="form-input" id="relationStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">失效日期</label>
+                        <input type="date" class="form-input" id="relationEndDate">
                     </div>
                 </div>
             </div>
@@ -8965,15 +9001,81 @@ function showAddRelationModal(type) {
     if (saveBtn) saveBtn.textContent = type ? '保存修改' : '保存关系';
     
     // 清空表单
+    document.getElementById('relationTypeSelect').value = '';
+    document.getElementById('relationDirection').value = 'one-way';
     document.getElementById('relationSourceSubject').value = '';
-    document.querySelectorAll('input[name="relationTarget"]').forEach(item => {
-        item.checked = false;
-    });
     
-    // 更新已选择标签
-    updateRelationTargetSelection();
+    // 清空多选下拉框
+    const targetSelect = document.getElementById('relationTargetSubject');
+    Array.from(targetSelect.options).forEach(opt => opt.selected = false);
+    
+    document.getElementById('relationDescription').value = '';
+    document.getElementById('relationStartDate').value = '';
+    document.getElementById('relationEndDate').value = '';
     
     modal.classList.add('show');
+}
+
+function onRelationTypeChange() {
+    const type = document.getElementById('relationTypeSelect').value;
+    const directionSelect = document.getElementById('relationDirection');
+    const sourceLabel = document.querySelector('label[for="relationSourceSubject"]') || 
+                        document.querySelector('#relationSourceSubject').closest('.form-group').querySelector('.form-label');
+    const targetLabel = document.querySelector('label[for="relationTargetSubject"]') || 
+                        document.querySelector('#relationTargetSubject').closest('.form-group').querySelector('.form-label');
+    
+    if (type === 'parent-child' || type === 'group-manage') {
+        directionSelect.value = 'one-way';
+        directionSelect.disabled = false;
+        if (sourceLabel) sourceLabel.textContent = '上级主体 *';
+        if (targetLabel) targetLabel.textContent = '下级主体 *';
+    } else if (type === 'cooperation') {
+        directionSelect.value = 'two-way';
+        directionSelect.disabled = false;
+        if (sourceLabel) sourceLabel.textContent = '主体A *';
+        if (targetLabel) targetLabel.textContent = '主体B *';
+    } else if (type === 'investment') {
+        directionSelect.value = 'one-way';
+        directionSelect.disabled = false;
+        if (sourceLabel) sourceLabel.textContent = '投资方 *';
+        if (targetLabel) targetLabel.textContent = '被投资方 *';
+    } else if (type === 'affiliate') {
+        directionSelect.value = 'two-way';
+        directionSelect.disabled = false;
+        if (sourceLabel) sourceLabel.textContent = '主体A *';
+        if (targetLabel) targetLabel.textContent = '主体B *';
+    } else {
+        directionSelect.disabled = true;
+        if (sourceLabel) sourceLabel.textContent = '上级主体 *';
+        if (targetLabel) targetLabel.textContent = '下级主体 *';
+    }
+}
+
+function onRelationDirectionChange() {
+    const type = document.getElementById('relationTypeSelect').value;
+    const direction = document.getElementById('relationDirection').value;
+    const sourceLabel = document.querySelector('label[for="relationSourceSubject"]') || 
+                        document.querySelector('#relationSourceSubject').closest('.form-group').querySelector('.form-label');
+    const targetLabel = document.querySelector('label[for="relationTargetSubject"]') || 
+                        document.querySelector('#relationTargetSubject').closest('.form-group').querySelector('.form-label');
+    
+    if (direction === 'two-way') {
+        if (type === 'cooperation') {
+            if (sourceLabel) sourceLabel.textContent = '主体A *';
+            if (targetLabel) targetLabel.textContent = '主体B *';
+        } else if (type === 'affiliate') {
+            if (sourceLabel) sourceLabel.textContent = '主体A *';
+            if (targetLabel) targetLabel.textContent = '主体B *';
+        }
+    } else {
+        if (type === 'parent-child' || type === 'group-manage') {
+            if (sourceLabel) sourceLabel.textContent = '上级主体 *';
+            if (targetLabel) targetLabel.textContent = '下级主体 *';
+        } else if (type === 'investment') {
+            if (sourceLabel) sourceLabel.textContent = '投资方 *';
+            if (targetLabel) targetLabel.textContent = '被投资方 *';
+        }
+    }
 }
 
 function getSubjectListByTypes(types) {
@@ -9131,16 +9233,24 @@ function removeRelationTarget(value) {
 }
 
 function saveSubjectRelation() {
-    const group = document.getElementById('relationSourceSubject').value;
-    const selectedTargets = document.querySelectorAll('input[name="relationTarget"]:checked');
+    const type = document.getElementById('relationTypeSelect').value;
+    const direction = document.getElementById('relationDirection').value;
+    const source = document.getElementById('relationSourceSubject').value;
+    const targetSelect = document.getElementById('relationTargetSubject');
+    const selectedTargets = Array.from(targetSelect.options).filter(opt => opt.selected).map(opt => opt.value);
     
-    if (!group) {
-        alert('请选择集团主体');
+    if (!type) {
+        alert('请选择关系类型');
+        return;
+    }
+    
+    if (!source) {
+        alert('请选择上级主体');
         return;
     }
     
     if (selectedTargets.length === 0) {
-        alert('请至少选择一个下属企业');
+        alert('请至少选择一个下级主体');
         return;
     }
     
