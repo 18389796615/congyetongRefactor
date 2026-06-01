@@ -5108,6 +5108,10 @@ input[type="radio"]{cursor:pointer}
                             <option value="次数">次数</option>
                             <option value="个数">个数</option>
                             <option value="资源">资源</option>
+                            <option value="G">G</option>
+                            <option value="GB">GB</option>
+                            <option value="TB">TB</option>
+                            <option value="MB">MB</option>
                         </select>
                     </div>
                 </div>
@@ -5136,10 +5140,6 @@ input[type="radio"]{cursor:pointer}
                             <option value="停用">停用</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">套餐引用</label>
-                    <input type="text" class="form-input" id="capabilityFormPackages" placeholder="多个套餐用顿号分隔，未引用可填 -">
                 </div>
                 <div class="form-group">
                     <label class="form-label">说明</label>
@@ -8145,7 +8145,6 @@ function showCapabilityPackageForm(mode, actionEl) {
     document.getElementById('capabilityFormQuota').value = currentCapabilityRow?.dataset.quota || '';
     document.getElementById('capabilityFormPrice').value = currentCapabilityRow?.dataset.price || '';
     document.getElementById('capabilityFormStatus').value = currentCapabilityRow?.dataset.status || '启用';
-    document.getElementById('capabilityFormPackages').value = currentCapabilityRow?.dataset.packages || '';
     document.getElementById('capabilityFormDesc').value = currentCapabilityRow?.dataset.desc || '';
     document.getElementById('capabilityPackageFormModal').classList.add('show');
 }
@@ -8208,7 +8207,7 @@ function saveCapabilityPackageForm() {
         status: document.getElementById('capabilityFormStatus').value,
         business: currentCapabilityRow?.dataset.business || '',
         relation: currentCapabilityRow?.dataset.relation || '',
-        packages: document.getElementById('capabilityFormPackages').value.trim() || '-',
+        packages: currentCapabilityRow?.dataset.packages || '-',
         desc: document.getElementById('capabilityFormDesc').value.trim()
     };
     if (currentCapabilityMode === 'edit' && currentCapabilityRow) {
