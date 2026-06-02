@@ -642,12 +642,12 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .industry-badge{display:inline-block;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:500}
 .industry-coal{background:rgba(239,68,68,.1);color:#ef4444}
 .industry-non-coal{background:rgba(16,185,129,.1);color:#10b981}
-.industry-tabs{display:flex;gap:12px;margin-bottom:20px}
-.industry-tab{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;transition:all .2s}
-.industry-tab:hover{border-color:var(--primary);background:rgba(99,102,241,.5)}
-.industry-tab.active{border-color:var(--primary);background:var(--primary);color:#fff}
-.industry-tab.active .industry-badge{background:rgba(255,255,255,.2);color:#fff}
-.org-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.org-structure-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.org-structure-section{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden}
+.org-structure-section .section-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border-bottom:1px solid var(--border)}
+.org-structure-section .section-header h3{font-size:15px;font-weight:600;color:var(--text-primary);margin:0}
+.org-structure-section .org-card-grid{padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;max-height:600px;overflow-y:auto}
+.org-structure-section .pagination-container{padding:12px 16px;border-top:1px solid var(--border);margin-top:0}
 .org-card{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:all .2s}
 .org-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
 .org-card.child-card{margin-top:12px;border-color:#e0e7ff;background:#faf5ff}
@@ -4531,280 +4531,296 @@ input[type="radio"]{cursor:pointer}
                     <a onclick="switchPage('config-template','基础配置','模板管理')">基础配置</a><span>/</span><a onclick="switchPage('org-template-view','基础配置','组织结构模板')">组织结构模板</a><span>/</span><span class="current">模板预览</span>
                 </div>
                 <div class="org-template-container">
-                    <div class="industry-tabs">
-                        <button class="industry-tab active" id="coal-tab" onclick="switchIndustry('coal')">
-                            <span class="industry-badge industry-coal">煤矿行业</span>
-                        </button>
-                        <button class="industry-tab" id="non-coal-tab" onclick="switchIndustry('non-coal')">
-                            <span class="industry-badge industry-non-coal">非煤矿行业</span>
-                        </button>
-                    </div>
-                    <div class="org-card-grid" id="orgCardGrid">
-                        <div class="org-card" id="coal-group-hq">
-                            <div class="card-header">
-                                <span class="expand-icon" onclick="toggleOrgCard('coal-group-hq')">▶</span>
-                                <span class="card-title">集团总部</span>
-                                <span class="level-badge level-1">一级部门</span>
+                    <div class="org-structure-wrapper">
+                        <div class="org-structure-section">
+                            <div class="section-header">
+                                <h3>煤矿行业组织架构</h3>
+                                <span class="industry-badge industry-coal">煤矿行业</span>
                             </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>所属集团：贵州能源集团有限公司</span>
-                                    <span>部门负责人：张总经理</span>
-                                </div>
-                                <div class="card-children" id="coal-group-hq-children">
-                                    <div class="org-card child-card" id="coal-safety">
-                                        <div class="card-header">
-                                            <span class="expand-icon" onclick="toggleOrgCard('coal-safety')">▶</span>
-                                            <span class="card-title">安全监察部</span>
-                                            <span class="level-badge level-2">二级部门</span>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-info">
-                                                <span>职责：负责安全生产监督</span>
-                                                <span>负责人：李部长</span>
-                                            </div>
-                                            <div class="card-children" id="coal-safety-children">
-                                                <div class="org-card grandchild-card">
-                                                    <div class="card-header">
-                                                        <span class="card-title">安全检查科</span>
-                                                        <span class="level-badge level-3">三级部门</span>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="card-info">
-                                                            <span>职责：日常安全检查</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="org-card grandchild-card">
-                                                    <div class="card-header">
-                                                        <span class="card-title">隐患治理科</span>
-                                                        <span class="level-badge level-3">三级部门</span>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="card-info">
-                                                            <span>职责：隐患排查治理</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="org-card-grid" id="orgCardGrid">
+                                <div class="org-card" id="coal-group-hq">
+                                    <div class="card-header">
+                                        <span class="expand-icon" onclick="toggleOrgCard('coal-group-hq')">▶</span>
+                                        <span class="card-title">集团总部</span>
+                                        <span class="level-badge level-1">一级部门</span>
                                     </div>
-                                    <div class="org-card child-card" id="coal-hr">
-                                        <div class="card-header">
-                                            <span class="expand-icon" onclick="toggleOrgCard('coal-hr')">▶</span>
-                                            <span class="card-title">人力资源部</span>
-                                            <span class="level-badge level-2">二级部门</span>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>所属集团：贵州能源集团有限公司</span>
+                                            <span>部门负责人：张总经理</span>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="card-info">
-                                                <span>职责：负责人员管理</span>
-                                                <span>负责人：王部长</span>
-                                            </div>
-                                            <div class="card-children" id="coal-hr-children">
-                                                <div class="org-card grandchild-card">
-                                                    <div class="card-header">
-                                                        <span class="card-title">招聘培训科</span>
-                                                        <span class="level-badge level-3">三级部门</span>
+                                        <div class="card-children" id="coal-group-hq-children">
+                                            <div class="org-card child-card" id="coal-safety">
+                                                <div class="card-header">
+                                                    <span class="expand-icon" onclick="toggleOrgCard('coal-safety')">▶</span>
+                                                    <span class="card-title">安全监察部</span>
+                                                    <span class="level-badge level-2">二级部门</span>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="card-info">
+                                                        <span>职责：负责安全生产监督</span>
+                                                        <span>负责人：李部长</span>
                                                     </div>
-                                                    <div class="card-body">
-                                                        <div class="card-info">
-                                                            <span>职责：招聘与培训</span>
+                                                    <div class="card-children" id="coal-safety-children">
+                                                        <div class="org-card grandchild-card">
+                                                            <div class="card-header">
+                                                                <span class="card-title">安全检查科</span>
+                                                                <span class="level-badge level-3">三级部门</span>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="card-info">
+                                                                    <span>职责：日常安全检查</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="org-card grandchild-card">
+                                                            <div class="card-header">
+                                                                <span class="card-title">隐患治理科</span>
+                                                                <span class="level-badge level-3">三级部门</span>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="card-info">
+                                                                    <span>职责：隐患排查治理</span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="org-card child-card" id="coal-production">
-                                        <div class="card-header">
-                                            <span class="expand-icon" onclick="toggleOrgCard('coal-production')">▶</span>
-                                            <span class="card-title">生产技术部</span>
-                                            <span class="level-badge level-2">二级部门</span>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-info">
-                                                <span>职责：负责生产技术管理</span>
-                                                <span>负责人：赵部长</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="org-card child-card" id="coal-mine-a">
-                                        <div class="card-header">
-                                            <span class="expand-icon" onclick="toggleOrgCard('coal-mine-a')">▶</span>
-                                            <span class="card-title">下属煤矿A</span>
-                                            <span class="level-badge level-2">二级部门</span>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-info">
-                                                <span>类型：生产矿井</span>
-                                                <span>负责人：孙矿长</span>
-                                            </div>
-                                            <div class="card-children" id="coal-mine-a-children">
-                                                <div class="org-card grandchild-card">
-                                                    <div class="card-header">
-                                                        <span class="card-title">综采一队</span>
-                                                        <span class="level-badge level-3">三级部门</span>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="card-info">
-                                                            <span>职责：采煤作业</span>
-                                                        </div>
-                                                    </div>
+                                            <div class="org-card child-card" id="coal-hr">
+                                                <div class="card-header">
+                                                    <span class="expand-icon" onclick="toggleOrgCard('coal-hr')">▶</span>
+                                                    <span class="card-title">人力资源部</span>
+                                                    <span class="level-badge level-2">二级部门</span>
                                                 </div>
-                                                <div class="org-card grandchild-card">
-                                                    <div class="card-header">
-                                                        <span class="card-title">掘进队</span>
-                                                        <span class="level-badge level-3">三级部门</span>
+                                                <div class="card-body">
+                                                    <div class="card-info">
+                                                        <span>职责：负责人员管理</span>
+                                                        <span>负责人：王部长</span>
                                                     </div>
-                                                    <div class="card-body">
-                                                        <div class="card-info">
-                                                            <span>职责：巷道掘进</span>
+                                                    <div class="card-children" id="coal-hr-children">
+                                                        <div class="org-card grandchild-card">
+                                                            <div class="card-header">
+                                                                <span class="card-title">招聘培训科</span>
+                                                                <span class="level-badge level-3">三级部门</span>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="card-info">
+                                                                    <span>职责：招聘与培训</span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="org-card" id="coal-training">
-                            <div class="card-header">
-                                <span class="card-title">培训中心</span>
-                                <span class="level-badge level-2">二级部门</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>职责：职工培训</span>
-                                    <span>负责人：陈主任</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="org-card" id="coal-repair">
-                            <div class="card-header">
-                                <span class="card-title">设备维修厂</span>
-                                <span class="level-badge level-2">二级部门</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>职责：设备维护</span>
-                                    <span>负责人：周厂长</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="org-card-grid hidden" id="nonCoalCardGrid">
-                        <div class="org-card" id="noncoal-group-hq">
-                            <div class="card-header">
-                                <span class="expand-icon" onclick="toggleOrgCard('noncoal-group-hq')">▶</span>
-                                <span class="card-title">集团总部</span>
-                                <span class="level-badge level-1">一级部门</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>所属集团：贵州XX矿业集团有限公司</span>
-                                    <span>部门负责人：刘总经理</span>
-                                </div>
-                                <div class="card-children" id="noncoal-group-hq-children">
-                                    <div class="org-card child-card" id="noncoal-operation">
-                                        <div class="card-header">
-                                            <span class="expand-icon" onclick="toggleOrgCard('noncoal-operation')">▶</span>
-                                            <span class="card-title">运营管理部</span>
-                                            <span class="level-badge level-2">二级部门</span>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-info">
-                                                <span>职责：负责日常运营</span>
-                                                <span>负责人：钱部长</span>
+                                            <div class="org-card child-card" id="coal-production">
+                                                <div class="card-header">
+                                                    <span class="expand-icon" onclick="toggleOrgCard('coal-production')">▶</span>
+                                                    <span class="card-title">生产技术部</span>
+                                                    <span class="level-badge level-2">二级部门</span>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="card-info">
+                                                        <span>职责：负责生产技术管理</span>
+                                                        <span>负责人：赵部长</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="org-card child-card" id="noncoal-safety">
-                                        <div class="card-header">
-                                            <span class="expand-icon" onclick="toggleOrgCard('noncoal-safety')">▶</span>
-                                            <span class="card-title">安全环保部</span>
-                                            <span class="level-badge level-2">二级部门</span>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-info">
-                                                <span>职责：安全与环保管理</span>
-                                                <span>负责人：冯部长</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="org-card child-card" id="noncoal-resource">
-                                        <div class="card-header">
-                                            <span class="expand-icon" onclick="toggleOrgCard('noncoal-resource')">▶</span>
-                                            <span class="card-title">资源开发部</span>
-                                            <span class="level-badge level-2">二级部门</span>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-info">
-                                                <span>职责：资源勘探开发</span>
-                                                <span>负责人：杨部长</span>
+                                            <div class="org-card child-card" id="coal-mine-a">
+                                                <div class="card-header">
+                                                    <span class="expand-icon" onclick="toggleOrgCard('coal-mine-a')">▶</span>
+                                                    <span class="card-title">下属煤矿A</span>
+                                                    <span class="level-badge level-2">二级部门</span>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="card-info">
+                                                        <span>类型：生产矿井</span>
+                                                        <span>负责人：孙矿长</span>
+                                                    </div>
+                                                    <div class="card-children" id="coal-mine-a-children">
+                                                        <div class="org-card grandchild-card">
+                                                            <div class="card-header">
+                                                                <span class="card-title">综采一队</span>
+                                                                <span class="level-badge level-3">三级部门</span>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="card-info">
+                                                                    <span>职责：采煤作业</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="org-card grandchild-card">
+                                                            <div class="card-header">
+                                                                <span class="card-title">掘进队</span>
+                                                                <span class="level-badge level-3">三级部门</span>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="card-info">
+                                                                    <span>职责：巷道掘进</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="org-card" id="coal-training">
+                                    <div class="card-header">
+                                        <span class="card-title">培训中心</span>
+                                        <span class="level-badge level-2">二级部门</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>职责：职工培训</span>
+                                            <span>负责人：陈主任</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="org-card" id="coal-repair">
+                                    <div class="card-header">
+                                        <span class="card-title">设备维修厂</span>
+                                        <span class="level-badge level-2">二级部门</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>职责：设备维护</span>
+                                            <span>负责人：周厂长</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="org-card" id="noncoal-quarry-a">
-                            <div class="card-header">
-                                <span class="card-title">采石场A</span>
-                                <span class="level-badge level-2">二级部门</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>类型：露天开采</span>
-                                    <span>负责人：吴场长</span>
+                            <div class="pagination-container">
+                                <div class="pagination-info">共 7 个部门</div>
+                                <div class="pagination">
+                                    <button class="page-btn disabled">上一页</button>
+                                    <button class="page-btn active">1</button>
+                                    <button class="page-btn">2</button>
+                                    <button class="page-btn">3</button>
+                                    <button class="page-btn">下一页</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="org-card" id="noncoal-quarry-b">
-                            <div class="card-header">
-                                <span class="card-title">采石场B</span>
-                                <span class="level-badge level-2">二级部门</span>
+                        <div class="org-structure-section">
+                            <div class="section-header">
+                                <h3>非煤矿行业组织架构</h3>
+                                <span class="industry-badge industry-non-coal">非煤矿行业</span>
                             </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>类型：露天开采</span>
-                                    <span>负责人：郑场长</span>
+                            <div class="org-card-grid" id="nonCoalCardGrid">
+                                <div class="org-card" id="noncoal-group-hq">
+                                    <div class="card-header">
+                                        <span class="expand-icon" onclick="toggleOrgCard('noncoal-group-hq')">▶</span>
+                                        <span class="card-title">集团总部</span>
+                                        <span class="level-badge level-1">一级部门</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>所属集团：贵州XX矿业集团有限公司</span>
+                                            <span>部门负责人：刘总经理</span>
+                                        </div>
+                                        <div class="card-children" id="noncoal-group-hq-children">
+                                            <div class="org-card child-card" id="noncoal-operation">
+                                                <div class="card-header">
+                                                    <span class="expand-icon" onclick="toggleOrgCard('noncoal-operation')">▶</span>
+                                                    <span class="card-title">运营管理部</span>
+                                                    <span class="level-badge level-2">二级部门</span>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="card-info">
+                                                        <span>职责：负责日常运营</span>
+                                                        <span>负责人：钱部长</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="org-card child-card" id="noncoal-safety">
+                                                <div class="card-header">
+                                                    <span class="expand-icon" onclick="toggleOrgCard('noncoal-safety')">▶</span>
+                                                    <span class="card-title">安全环保部</span>
+                                                    <span class="level-badge level-2">二级部门</span>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="card-info">
+                                                        <span>职责：安全与环保管理</span>
+                                                        <span>负责人：冯部长</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="org-card child-card" id="noncoal-resource">
+                                                <div class="card-header">
+                                                    <span class="expand-icon" onclick="toggleOrgCard('noncoal-resource')">▶</span>
+                                                    <span class="card-title">资源开发部</span>
+                                                    <span class="level-badge level-2">二级部门</span>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="card-info">
+                                                        <span>职责：资源勘探开发</span>
+                                                        <span>负责人：杨部长</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="org-card" id="noncoal-quarry-a">
+                                    <div class="card-header">
+                                        <span class="card-title">采石场A</span>
+                                        <span class="level-badge level-2">二级部门</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>类型：露天开采</span>
+                                            <span>负责人：吴场长</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="org-card" id="noncoal-quarry-b">
+                                    <div class="card-header">
+                                        <span class="card-title">采石场B</span>
+                                        <span class="level-badge level-2">二级部门</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>类型：露天开采</span>
+                                            <span>负责人：郑场长</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="org-card" id="noncoal-processing">
+                                    <div class="card-header">
+                                        <span class="card-title">加工厂</span>
+                                        <span class="level-badge level-2">二级部门</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>职责：产品加工</span>
+                                            <span>负责人：许厂长</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="org-card" id="noncoal-sales">
+                                    <div class="card-header">
+                                        <span class="card-title">销售公司</span>
+                                        <span class="level-badge level-2">二级部门</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-info">
+                                            <span>职责：产品销售</span>
+                                            <span>负责人：何经理</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="org-card" id="noncoal-processing">
-                            <div class="card-header">
-                                <span class="card-title">加工厂</span>
-                                <span class="level-badge level-2">二级部门</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>职责：产品加工</span>
-                                    <span>负责人：许厂长</span>
+                            <div class="pagination-container">
+                                <div class="pagination-info">共 7 个部门</div>
+                                <div class="pagination">
+                                    <button class="page-btn disabled">上一页</button>
+                                    <button class="page-btn active">1</button>
+                                    <button class="page-btn">2</button>
+                                    <button class="page-btn">3</button>
+                                    <button class="page-btn">下一页</button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="org-card" id="noncoal-sales">
-                            <div class="card-header">
-                                <span class="card-title">销售公司</span>
-                                <span class="level-badge level-2">二级部门</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <span>职责：产品销售</span>
-                                    <span>负责人：何经理</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pagination-container">
-                        <div class="pagination-info">共 7 个部门</div>
-                        <div class="pagination">
-                            <button class="page-btn disabled">上一页</button>
-                            <button class="page-btn active">1</button>
-                            <button class="page-btn">2</button>
-                            <button class="page-btn">3</button>
-                            <button class="page-btn">下一页</button>
                         </div>
                     </div>
                 </div>
@@ -9355,25 +9371,6 @@ function viewTemplate(actionEl) {
 
 function viewOrgTemplate() {
     switchPage('org-template-view', '基础配置', '组织结构模板');
-}
-
-function switchIndustry(industry) {
-    const coalGrid = document.getElementById('orgCardGrid');
-    const nonCoalGrid = document.getElementById('nonCoalCardGrid');
-    const coalTab = document.getElementById('coal-tab');
-    const nonCoalTab = document.getElementById('non-coal-tab');
-    
-    if (industry === 'coal') {
-        coalGrid.classList.remove('hidden');
-        nonCoalGrid.classList.add('hidden');
-        coalTab.classList.add('active');
-        nonCoalTab.classList.remove('active');
-    } else {
-        coalGrid.classList.add('hidden');
-        nonCoalGrid.classList.remove('hidden');
-        coalTab.classList.remove('active');
-        nonCoalTab.classList.add('active');
-    }
 }
 
 function toggleOrgCard(cardId) {
