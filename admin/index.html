@@ -87,6 +87,10 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 .type-directory{background:rgba(139,92,246,.1);color:#8b5cf6}
 .type-menu{background:rgba(34,197,94,.1);color:#22c55e}
 .type-permission{background:rgba(236,72,153,.1);color:#ec4899}
+.type-document{background:rgba(59,130,246,.1);color:#3b82f6}
+.type-report{background:rgba(249,115,22,.1);color:#f97316}
+.type-form{background:rgba(34,197,94,.1);color:#22c55e}
+.type-contract{background:rgba(139,92,246,.1);color:#8b5cf6}
 .status-active{background:var(--success-bg);color:var(--success)}
 .status-pending{background:rgba(245,158,11,.1);color:var(--warning)}
 .status-inactive{background:rgba(138,154,170,.1);color:var(--text-muted)}
@@ -996,7 +1000,7 @@ input[type="radio"]{cursor:pointer}
                 <div class="submenu" id="config-submenu">
                     <div class="submenu-item" onclick="switchPage('config-dict','基础配置','字典配置',this)">字典配置</div>
                     <div class="submenu-item" onclick="switchPage('config-process','基础配置','流程配置',this)">流程配置</div>
-                    <div class="submenu-item" onclick="switchPage('config-rule','基础配置','规则配置',this)">规则配置</div>
+                    <div class="submenu-item" onclick="switchPage('config-template','基础配置','模板管理',this)">模板管理</div>
                 </div>
                 <div class="nav-item" onclick="switchPage('log','权限管理','操作日志',this)">
                     <span>操作日志</span>
@@ -4265,26 +4269,30 @@ input[type="radio"]{cursor:pointer}
                 </div>
             </div>
 
-            <div class="page-section" id="page-config-rule">
+            <div class="page-section" id="page-config-template">
                 <div class="breadcrumb">
-                    <a onclick="switchPage('config-rule','基础配置','规则配置')">基础配置</a><span>/</span><span class="current">规则配置</span>
+                    <a onclick="switchPage('config-template','基础配置','模板管理')">基础配置</a><span>/</span><span class="current">模板管理</span>
                 </div>
                 <div class="filter-bar">
                     <div class="filter-item">
-                        <input type="text" class="form-input filter-input" placeholder="请输入规则名称">
-                    </div>
-                    <div class="filter-item">
-                        <select class="form-select filter-select">
-                            <option value="">行业</option>
-                            <option value="coal">煤矿行业</option>
-                            <option value="non_coal">非煤矿行业</option>
-                        </select>
+                        <input type="text" class="form-input filter-input" placeholder="请输入模板名称">
                     </div>
                     <div class="filter-item">
                         <select class="form-select filter-select">
                             <option value="">类型</option>
-                            <option value="alert">预警规则</option>
-                            <option value="validate">校验规则</option>
+                            <option value="document">文档模板</option>
+                            <option value="report">报表模板</option>
+                            <option value="form">表单模板</option>
+                            <option value="contract">合同模板</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <select class="form-select filter-select">
+                            <option value="">适用模块</option>
+                            <option value="personnel">人事管理</option>
+                            <option value="training">培训管理</option>
+                            <option value="safety">安全管理</option>
+                            <option value="equipment">设备管理</option>
                         </select>
                     </div>
                     <div class="filter-item">
@@ -4295,70 +4303,164 @@ input[type="radio"]{cursor:pointer}
                         </select>
                     </div>
                     <div class="filter-actions">
-                        <button class="btn btn-secondary" onclick="resetRuleFilters()">重置</button>
-                        <button class="btn btn-primary" onclick="searchRule()">查询</button>
+                        <button class="btn btn-secondary" onclick="resetTemplateFilters()">重置</button>
+                        <button class="btn btn-primary" onclick="searchTemplate()">查询</button>
                     </div>
                 </div>
                 <div class="data-table">
                     <div class="table-header">
                         <div class="table-actions">
-                            <button class="btn btn-secondary" onclick="refreshRule()">刷新</button>
-                            <button class="btn btn-primary" onclick="showRuleModal()">新增规则</button>
+                            <button class="btn btn-secondary" onclick="refreshTemplate()">刷新</button>
+                            <button class="btn btn-primary" onclick="showTemplateModal()">新增模板</button>
                         </div>
                     </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>规则名称</th>
-                                <th>规则编码</th>
-                                <th>适用行业</th>
-                                <th>规则类型</th>
+                                <th>模板名称</th>
+                                <th>模板编码</th>
+                                <th>类型</th>
+                                <th>适用模块</th>
+                                <th>版本</th>
                                 <th>状态</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>特种作业证有效期提醒</td>
-                                <td>CERT_EXPIRE_ALERT</td>
-                                <td><span class="industry-badge industry-coal">煤矿行业</span></td>
-                                <td>预警规则</td>
+                                <td>员工入职登记表</td>
+                                <td>EMP_ONBOARD_FORM</td>
+                                <td><span class="type-badge type-form">表单模板</span></td>
+                                <td>人事管理</td>
+                                <td>v1.2</td>
                                 <td><span class="status-badge status-enabled">启用</span></td>
                                 <td>
                                     <div class="action-links">
-                                        <span class="action-link" onclick="editRule()">编辑</span>
-                                        <span class="action-link" onclick="testRule()">测试</span>
+                                        <span class="action-link" onclick="editTemplate()">编辑</span>
+                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>体检周期校验</td>
-                                <td>HEALTH_CHECK_VALID</td>
-                                <td><span class="industry-badge industry-coal">煤矿行业</span></td>
-                                <td>校验规则</td>
+                                <td>培训计划模板</td>
+                                <td>TRAIN_PLAN_TPL</td>
+                                <td><span class="type-badge type-document">文档模板</span></td>
+                                <td>培训管理</td>
+                                <td>v1.0</td>
                                 <td><span class="status-badge status-enabled">启用</span></td>
                                 <td>
                                     <div class="action-links">
-                                        <span class="action-link" onclick="editRule()">编辑</span>
-                                        <span class="action-link" onclick="testRule()">测试</span>
+                                        <span class="action-link" onclick="editTemplate()">编辑</span>
+                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>培训学时要求</td>
-                                <td>TRAINING_HOURS</td>
-                                <td><span class="industry-badge industry-coal">煤矿行业</span></td>
-                                <td>校验规则</td>
+                                <td>安全检查报告</td>
+                                <td>SAFETY_REPORT</td>
+                                <td><span class="type-badge type-report">报表模板</span></td>
+                                <td>安全管理</td>
+                                <td>v2.1</td>
                                 <td><span class="status-badge status-enabled">启用</span></td>
                                 <td>
                                     <div class="action-links">
-                                        <span class="action-link" onclick="editRule()">编辑</span>
-                                        <span class="action-link" onclick="testRule()">测试</span>
+                                        <span class="action-link" onclick="editTemplate()">编辑</span>
+                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>设备采购合同</td>
+                                <td>EQUIP_CONTRACT</td>
+                                <td><span class="type-badge type-contract">合同模板</span></td>
+                                <td>设备管理</td>
+                                <td>v1.0</td>
+                                <td><span class="status-badge status-inactive">禁用</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link" onclick="editTemplate()">编辑</span>
+                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link action-success" onclick="toggleTemplateStatus(this)">启用</span>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <div class="modal-overlay" id="templateModal">
+                <div class="modal modal-lg">
+                    <div class="modal-header">
+                        <span class="modal-title" id="templateModalTitle">新增模板</span>
+                        <button class="modal-close" onclick="hideModal('templateModal')">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">模板名称 *</label>
+                                <input type="text" class="form-input" id="templateName" placeholder="请输入模板名称">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">模板编码 *</label>
+                                <input type="text" class="form-input" id="templateCode" placeholder="请输入模板编码">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">类型 *</label>
+                                <select class="form-select" id="templateType">
+                                    <option value="">请选择类型</option>
+                                    <option value="document">文档模板</option>
+                                    <option value="report">报表模板</option>
+                                    <option value="form">表单模板</option>
+                                    <option value="contract">合同模板</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">适用模块 *</label>
+                                <select class="form-select" id="templateModule">
+                                    <option value="">请选择适用模块</option>
+                                    <option value="personnel">人事管理</option>
+                                    <option value="training">培训管理</option>
+                                    <option value="safety">安全管理</option>
+                                    <option value="equipment">设备管理</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">版本</label>
+                                <input type="text" class="form-input" id="templateVersion" placeholder="v1.0" value="v1.0">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">状态</label>
+                                <select class="form-select" id="templateStatus">
+                                    <option value="enabled">启用</option>
+                                    <option value="disabled">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">模板内容</label>
+                                <textarea class="form-input" id="templateContent" rows="6" placeholder="请输入模板内容"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">描述</label>
+                                <textarea class="form-input" id="templateDesc" rows="3" placeholder="请输入模板描述"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="hideModal('templateModal')">取消</button>
+                        <button class="btn btn-primary" onclick="saveTemplate()">保存</button>
+                    </div>
                 </div>
             </div>
 
@@ -8859,6 +8961,92 @@ function saveSecurityPolicyEdit() {
     currentSecurityPolicyRow.children[4].textContent = action;
     hideModal('securityPolicyEditModal');
     showToast('安全策略已更新', 'success');
+}
+
+// 模板管理相关函数
+function resetTemplateFilters() {
+    document.querySelectorAll('#page-config-template .filter-input, #page-config-template .filter-select').forEach(el => {
+        el.value = '';
+    });
+}
+
+function searchTemplate() {
+    showToast('查询模板列表', 'info');
+}
+
+function refreshTemplate() {
+    showToast('刷新模板列表', 'info');
+}
+
+function showTemplateModal(type) {
+    const modal = document.getElementById('templateModal');
+    const title = document.getElementById('templateModalTitle');
+    
+    if (title) title.textContent = type ? '编辑模板' : '新增模板';
+    
+    // 清空表单
+    document.getElementById('templateName').value = '';
+    document.getElementById('templateCode').value = '';
+    document.getElementById('templateType').value = '';
+    document.getElementById('templateModule').value = '';
+    document.getElementById('templateVersion').value = 'v1.0';
+    document.getElementById('templateStatus').value = 'enabled';
+    document.getElementById('templateContent').value = '';
+    document.getElementById('templateDesc').value = '';
+    
+    modal.classList.add('show');
+}
+
+function editTemplate() {
+    showTemplateModal(true);
+}
+
+function previewTemplate() {
+    showToast('预览模板', 'info');
+}
+
+function toggleTemplateStatus(actionEl) {
+    const row = actionEl.closest('tr');
+    const statusBadge = row.querySelector('.status-badge');
+    const currentStatus = statusBadge.classList.contains('status-enabled') ? 'enabled' : 'disabled';
+    
+    if (currentStatus === 'enabled') {
+        statusBadge.className = 'status-badge status-inactive';
+        statusBadge.textContent = '禁用';
+        actionEl.textContent = '启用';
+        actionEl.className = 'action-link action-success';
+    } else {
+        statusBadge.className = 'status-badge status-enabled';
+        statusBadge.textContent = '启用';
+        actionEl.textContent = '禁用';
+        actionEl.className = 'action-link action-warning';
+    }
+    
+    showToast('模板状态已更新', 'success');
+}
+
+function saveTemplate() {
+    const name = document.getElementById('templateName').value.trim();
+    const code = document.getElementById('templateCode').value.trim();
+    const type = document.getElementById('templateType').value;
+    
+    if (!name) {
+        alert('请输入模板名称');
+        return;
+    }
+    
+    if (!code) {
+        alert('请输入模板编码');
+        return;
+    }
+    
+    if (!type) {
+        alert('请选择模板类型');
+        return;
+    }
+    
+    hideModal('templateModal');
+    showToast('模板已保存', 'success');
 }
 
 function showSecurityHitDetail(actionEl) {
