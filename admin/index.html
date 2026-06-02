@@ -600,6 +600,29 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .selected-items{padding:8px;border-top:1px solid var(--border);min-height:36px;display:flex;flex-wrap:gap:4px}
 .selected-tag{display:inline-flex;align-items:center;padding:4px 8px;background:var(--primary);color:#fff;border-radius:4px;font-size:12px;margin-right:4px;margin-bottom:4px}
 .selected-tag .remove-tag{margin-left:6px;cursor:pointer}
+.multi-select-actions{display:flex;gap:16px;font-size:12px;color:var(--primary)}
+.multi-select-actions a{cursor:pointer}
+.multi-select-actions a:hover{text-decoration:underline}
+.multi-select-tree{max-height:200px;overflow-y:auto;border-top:1px solid var(--border)}
+.tree-group{border-bottom:1px solid var(--border)}
+.tree-group:last-child{border-bottom:none}
+.tree-group-header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg-content);cursor:pointer}
+.tree-group-header:hover{background:var(--bg-hover)}
+.tree-icon{font-size:10px;color:var(--text-muted);transition:transform .2s}
+.tree-icon.expanded{transform:rotate(90deg)}
+.tree-label{flex:1;font-size:13px;color:var(--text-primary)}
+.group-checkbox{margin-left:auto}
+.tree-items{padding-left:24px}
+.tree-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:4px}
+.tree-item:hover{background:var(--bg-hover)}
+.tree-item input{margin:0}
+.tree-item span{font-size:13px;color:var(--text-secondary)}
+.multi-select-tags{padding:10px 12px;border-top:1px solid var(--border);background:var(--bg-content)}
+.tags-label{font-size:12px;color:var(--text-muted);margin-bottom:6px}
+.tags-container{display:flex;flex-wrap:gap:6px;gap:6px;max-height:80px;overflow-y:auto}
+.relation-tag{display:inline-flex;align-items:center;padding:4px 10px;background:var(--primary);color:#fff;border-radius:4px;font-size:12px}
+.relation-tag .remove-tag{margin-left:6px;cursor:pointer}
+.filter-hidden{display:none}
 
 .subject-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px;margin-bottom:4px}
 .subject-group{background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff}
@@ -5998,21 +6021,73 @@ input[type="radio"]{cursor:pointer}
                     </div>
                     <div class="form-group">
                         <label class="form-label">下级主体 *</label>
-                        <div class="subject-select-wrapper">
-                            <select class="form-select" id="relationTargetSubject" multiple size="5" onchange="updateRelationTargetSelection()">
-                                <optgroup label="集团">
-                                    <option value="group1">贵州能源集团</option>
-                                    <option value="group2">六盘水矿业集团</option>
-                                    <option value="group3">贵州XX矿业集团</option>
-                                </optgroup>
-                                <optgroup label="企业">
-                                    <option value="ent1">贵州XX煤矿有限公司</option>
-                                    <option value="ent2">贵州安顺清源煤矿有限公司</option>
-                                    <option value="ent3">贵州毕节新源煤矿有限公司</option>
-                                    <option value="ent4">贵州XX煤矿科技有限公司</option>
-                                    <option value="ent5">贵州XX职业培训中心</option>
-                                </optgroup>
-                            </select>
+                        <div class="multi-select-container">
+                            <div class="multi-select-header">
+                                <span class="multi-select-label">已选择 <span id="selectedCount">0</span> 个主体</span>
+                                <span class="multi-select-actions">
+                                    <a href="javascript:void(0)" onclick="checkAllRelationTargets()">全选</a>
+                                    <a href="javascript:void(0)" onclick="clearAllRelationTargets()">清空</a>
+                                </span>
+                            </div>
+                            <div class="multi-select-search">
+                                <input type="text" class="form-input" id="relationTargetSearch" placeholder="搜索主体..." oninput="filterRelationTargets()">
+                            </div>
+                            <div class="multi-select-tree">
+                                <div class="tree-group">
+                                    <div class="tree-group-header" onclick="toggleGroup('group')">
+                                        <span class="tree-icon">▶</span>
+                                        <span class="tree-label">集团</span>
+                                        <input type="checkbox" class="group-checkbox" onchange="checkGroup('group')">
+                                    </div>
+                                    <div class="tree-items" id="groupItems">
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="group1">
+                                            <span>贵州能源集团</span>
+                                        </label>
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="group2">
+                                            <span>六盘水矿业集团</span>
+                                        </label>
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="group3">
+                                            <span>贵州XX矿业集团</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="tree-group">
+                                    <div class="tree-group-header" onclick="toggleGroup('enterprise')">
+                                        <span class="tree-icon">▶</span>
+                                        <span class="tree-label">企业</span>
+                                        <input type="checkbox" class="group-checkbox" onchange="checkGroup('enterprise')">
+                                    </div>
+                                    <div class="tree-items" id="enterpriseItems">
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="ent1">
+                                            <span>贵州XX煤矿有限公司</span>
+                                        </label>
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="ent2">
+                                            <span>贵州安顺清源煤矿有限公司</span>
+                                        </label>
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="ent3">
+                                            <span>贵州毕节新源煤矿有限公司</span>
+                                        </label>
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="ent4">
+                                            <span>贵州XX煤矿科技有限公司</span>
+                                        </label>
+                                        <label class="tree-item">
+                                            <input type="checkbox" name="relationTarget" value="ent5">
+                                            <span>贵州XX职业培训中心</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="multi-select-tags" id="selectedRelationTags">
+                                <div class="tags-label">已选主体：</div>
+                                <div class="tags-container" id="relationTagsContainer"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -8996,16 +9071,100 @@ function showAddRelationModal(type) {
     // 清空表单
     document.getElementById('relationTypeSelect').value = '';
     document.getElementById('relationSourceSubject').value = '';
+    document.getElementById('relationTargetSearch').value = '';
     
-    // 清空多选下拉框
-    const targetSelect = document.getElementById('relationTargetSubject');
-    Array.from(targetSelect.options).forEach(opt => opt.selected = false);
+    // 清空复选框
+    document.querySelectorAll('input[name="relationTarget"]').forEach(item => {
+        item.checked = false;
+    });
+    
+    // 展开所有分组
+    document.querySelectorAll('.tree-icon').forEach(icon => icon.classList.add('expanded'));
     
     document.getElementById('relationDescription').value = '';
     document.getElementById('relationStartDate').value = '';
     document.getElementById('relationEndDate').value = '';
     
+    // 更新选中计数和标签
+    updateRelationTargetSelection();
+    
     modal.classList.add('show');
+}
+
+function toggleGroup(groupId) {
+    const items = document.getElementById(groupId + 'Items');
+    const icon = document.querySelector(`.tree-group-header[onclick="toggleGroup('${groupId}')"] .tree-icon`);
+    if (items && icon) {
+        items.classList.toggle('filter-hidden');
+        icon.classList.toggle('expanded');
+    }
+}
+
+function checkGroup(groupId) {
+    const checkbox = document.querySelector(`.tree-group-header[onclick="toggleGroup('${groupId}')"] .group-checkbox`);
+    const items = document.querySelectorAll(`#${groupId}Items input[type="checkbox"]`);
+    items.forEach(item => item.checked = checkbox.checked);
+    updateRelationTargetSelection();
+}
+
+function checkAllRelationTargets() {
+    document.querySelectorAll('input[name="relationTarget"]').forEach(item => item.checked = true);
+    document.querySelectorAll('.group-checkbox').forEach(item => item.checked = true);
+    updateRelationTargetSelection();
+}
+
+function clearAllRelationTargets() {
+    document.querySelectorAll('input[name="relationTarget"]').forEach(item => item.checked = false);
+    document.querySelectorAll('.group-checkbox').forEach(item => item.checked = false);
+    document.getElementById('relationTargetSearch').value = '';
+    filterRelationTargets();
+    updateRelationTargetSelection();
+}
+
+function filterRelationTargets() {
+    const searchText = document.getElementById('relationTargetSearch').value.toLowerCase();
+    document.querySelectorAll('.tree-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.classList.toggle('filter-hidden', searchText && !text.includes(searchText));
+    });
+}
+
+function updateRelationTargetSelection() {
+    const checkedItems = document.querySelectorAll('input[name="relationTarget"]:checked');
+    const count = checkedItems.length;
+    const countEl = document.getElementById('selectedCount');
+    const tagsContainer = document.getElementById('relationTagsContainer');
+    
+    if (countEl) countEl.textContent = count;
+    
+    // 更新标签显示
+    tagsContainer.innerHTML = '';
+    checkedItems.forEach(item => {
+        const label = item.nextElementSibling?.textContent || item.value;
+        const tag = document.createElement('span');
+        tag.className = 'relation-tag';
+        tag.innerHTML = `${label}<span class="remove-tag" onclick="removeRelationTag('${item.value}')">×</span>`;
+        tagsContainer.appendChild(tag);
+    });
+    
+    // 更新分组复选框状态
+    ['group', 'enterprise'].forEach(groupId => {
+        const groupItems = document.querySelectorAll(`#${groupId}Items input[type="checkbox"]`);
+        const checkedGroupItems = document.querySelectorAll(`#${groupId}Items input[type="checkbox"]:checked`);
+        const groupCheckbox = document.querySelector(`.tree-group-header[onclick="toggleGroup('${groupId}')"] .group-checkbox`);
+        if (groupCheckbox) {
+            groupCheckbox.checked = checkedGroupItems.length === groupItems.length;
+            groupCheckbox.indeterminate = checkedGroupItems.length > 0 && checkedGroupItems.length < groupItems.length;
+        }
+    });
+}
+
+function removeRelationTag(value) {
+    const checkbox = document.querySelector(`input[name="relationTarget"][value="${value}"]`);
+    if (checkbox) {
+        checkbox.checked = false;
+        updateRelationTargetSelection();
+    }
 }
 
 function getSubjectListByTypes(types) {
@@ -9165,8 +9324,7 @@ function removeRelationTarget(value) {
 function saveSubjectRelation() {
     const type = document.getElementById('relationTypeSelect').value;
     const source = document.getElementById('relationSourceSubject').value;
-    const targetSelect = document.getElementById('relationTargetSubject');
-    const selectedTargets = Array.from(targetSelect.options).filter(opt => opt.selected).map(opt => opt.value);
+    const selectedTargets = Array.from(document.querySelectorAll('input[name="relationTarget"]:checked')).map(item => item.value);
     
     if (!type) {
         alert('请选择关系类型');
