@@ -627,6 +627,21 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .relation-tag{display:inline-flex;align-items:center;padding:4px 10px;background:var(--primary);color:#fff;border-radius:4px;font-size:12px}
 .relation-tag .remove-tag{margin-left:6px;cursor:pointer}
 .filter-hidden{display:none}
+.org-template-container{padding:20px}
+.template-section{background:#fff;border-radius:8px;padding:24px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.section-header h3{font-size:16px;font-weight:600;color:var(--text-primary);margin:0}
+.org-chart{display:flex;flex-direction:column;align-items:center;gap:16px}
+.org-level-1,.org-level-2,.org-level-3{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.org-level-1{width:100%}
+.org-node{background:linear-gradient(135deg,var(--primary) 0%,#6366f1 100%);border-radius:8px;padding:16px 24px;text-align:center;min-width:180px;box-shadow:0 4px 12px rgba(99,102,241,.3)}
+.org-node .node-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.org-node .node-desc{font-size:12px;color:rgba(255,255,255,.8)}
+.org-level-2 .org-node{background:linear-gradient(135deg,#10b981 0%,#059669 100%);box-shadow:0 4px 12px rgba(16,185,129,.3)}
+.org-level-3 .org-node{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);box-shadow:0 4px 12px rgba(245,158,11,.3);min-width:140px;padding:12px 16px}
+.industry-badge{display:inline-block;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:500}
+.industry-coal{background:rgba(239,68,68,.1);color:#ef4444}
+.industry-non-coal{background:rgba(16,185,129,.1);color:#10b981}
 
 .subject-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px;margin-bottom:4px}
 .subject-group{background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff}
@@ -4337,7 +4352,7 @@ input[type="radio"]{cursor:pointer}
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
-                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link" onclick="viewTemplate(this)">查看</span>
                                         <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
                                     </div>
                                 </td>
@@ -4352,7 +4367,7 @@ input[type="radio"]{cursor:pointer}
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
-                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link" onclick="viewTemplate(this)">查看</span>
                                         <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
                                     </div>
                                 </td>
@@ -4367,7 +4382,7 @@ input[type="radio"]{cursor:pointer}
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
-                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link" onclick="viewTemplate(this)">查看</span>
                                         <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
                                     </div>
                                 </td>
@@ -4382,8 +4397,23 @@ input[type="radio"]{cursor:pointer}
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
-                                        <span class="action-link" onclick="previewTemplate()">预览</span>
+                                        <span class="action-link" onclick="viewTemplate(this)">查看</span>
                                         <span class="action-link action-success" onclick="toggleTemplateStatus(this)">启用</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>组织机构模板</td>
+                                <td>ORG_STRUCTURE_TPL</td>
+                                <td><span class="type-badge type-document">文档模板</span></td>
+                                <td>人事管理</td>
+                                <td>v1.0</td>
+                                <td><span class="status-badge status-enabled">启用</span></td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link" onclick="editTemplate()">编辑</span>
+                                        <span class="action-link" onclick="viewOrgTemplate()">查看</span>
+                                        <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
                                     </div>
                                 </td>
                             </tr>
@@ -4460,6 +4490,106 @@ input[type="radio"]{cursor:pointer}
                     <div class="modal-footer">
                         <button class="btn btn-secondary" onclick="hideModal('templateModal')">取消</button>
                         <button class="btn btn-primary" onclick="saveTemplate()">保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-section" id="page-org-template-view">
+                <div class="breadcrumb">
+                    <a onclick="switchPage('config-template','基础配置','模板管理')">基础配置</a><span>/</span><a onclick="switchPage('org-template-view','基础配置','组织结构模板')">组织结构模板</a><span>/</span><span class="current">模板预览</span>
+                </div>
+                <div class="org-template-container">
+                    <div class="template-section">
+                        <div class="section-header">
+                            <h3>煤矿行业组织架构</h3>
+                            <span class="industry-badge industry-coal">煤矿行业</span>
+                        </div>
+                        <div class="org-chart">
+                            <div class="org-level-1">
+                                <div class="org-node">
+                                    <div class="node-title">集团总部</div>
+                                    <div class="node-desc">贵州能源集团有限公司</div>
+                                </div>
+                            </div>
+                            <div class="org-level-2">
+                                <div class="org-node">
+                                    <div class="node-title">安全监察部</div>
+                                    <div class="node-desc">负责安全生产监督</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">人力资源部</div>
+                                    <div class="node-desc">负责人员管理</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">生产技术部</div>
+                                    <div class="node-desc">负责生产技术管理</div>
+                                </div>
+                            </div>
+                            <div class="org-level-3">
+                                <div class="org-node">
+                                    <div class="node-title">下属煤矿A</div>
+                                    <div class="node-desc">生产矿井</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">下属煤矿B</div>
+                                    <div class="node-desc">生产矿井</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">培训中心</div>
+                                    <div class="node-desc">职工培训</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">设备维修厂</div>
+                                    <div class="node-desc">设备维护</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="template-section">
+                        <div class="section-header">
+                            <h3>非煤矿行业组织架构</h3>
+                            <span class="industry-badge industry-non-coal">非煤矿行业</span>
+                        </div>
+                        <div class="org-chart">
+                            <div class="org-level-1">
+                                <div class="org-node">
+                                    <div class="node-title">集团总部</div>
+                                    <div class="node-desc">贵州XX矿业集团有限公司</div>
+                                </div>
+                            </div>
+                            <div class="org-level-2">
+                                <div class="org-node">
+                                    <div class="node-title">运营管理部</div>
+                                    <div class="node-desc">负责日常运营</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">安全环保部</div>
+                                    <div class="node-desc">安全与环保管理</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">资源开发部</div>
+                                    <div class="node-desc">资源勘探开发</div>
+                                </div>
+                            </div>
+                            <div class="org-level-3">
+                                <div class="org-node">
+                                    <div class="node-title">采石场A</div>
+                                    <div class="node-desc">露天开采</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">采石场B</div>
+                                    <div class="node-desc">露天开采</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">加工厂</div>
+                                    <div class="node-desc">产品加工</div>
+                                </div>
+                                <div class="org-node">
+                                    <div class="node-title">销售公司</div>
+                                    <div class="node-desc">产品销售</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -9001,8 +9131,14 @@ function editTemplate() {
     showTemplateModal(true);
 }
 
-function previewTemplate() {
-    showToast('预览模板', 'info');
+function viewTemplate(actionEl) {
+    const row = actionEl.closest('tr');
+    const templateName = row.children[0].textContent.trim();
+    showToast(`查看模板：${templateName}`, 'info');
+}
+
+function viewOrgTemplate() {
+    switchPage('org-template-view', '基础配置', '组织结构模板');
 }
 
 function toggleTemplateStatus(actionEl) {
