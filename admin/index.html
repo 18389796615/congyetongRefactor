@@ -385,6 +385,16 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .service-tab.active{background:var(--primary);color:#fff;font-weight:600}
 .service-tab-content{min-height:300px}
 .service-filter{margin-bottom:16px}
+.relation-tree-view{background:rgba(248,250,252,.8);border-radius:12px;padding:20px;margin-top:12px}
+.tree-node{margin-bottom:8px}
+.tree-node-header{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.tree-node-icon{font-size:14px;color:var(--primary);width:20px;text-align:center}
+.tree-node-name{font-size:14px;color:var(--text-primary);font-weight:500}
+.tree-children{padding-left:24px;margin-top:8px}
+.tree-children .tree-node-header{background:rgba(248,250,252,.8);border:1px solid rgba(14,165,233,.08)}
+.tree-children .tree-node-header .tree-node-icon{color:var(--text-secondary)}
+.tree-children .tree-children .tree-node-header{background:rgba(241,245,249,.6);border:none}
+.tree-children .tree-children .tree-node-header .tree-node-icon{color:var(--text-muted)}
 .service-workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;margin-bottom:20px}
 .service-main-stack{display:flex;flex-direction:column;gap:20px;min-width:0}
 .service-side-panel{background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border:1px solid rgba(14,165,233,.1);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;position:sticky;top:86px}
@@ -6598,25 +6608,51 @@ input[type="radio"]{cursor:pointer}
                         <div class="info-item"><span class="info-label">关系类型</span><span class="info-value" id="relationDetailTypeText">集团管理下属企业</span></div>
                     </div>
                 </div>
-                <div class="detail-section">
-                    <div class="detail-section-header"><span class="detail-section-icon">2</span><span class="detail-section-title">数据授权</span></div>
-                    <div class="ability-tags" id="relationDetailDomains">
-                        <span class="ability-tag">人员基础信息</span>
-                        <span class="ability-tag">培训任务</span>
-                        <span class="ability-tag">考试数据</span>
-                        <span class="ability-tag">证书数据</span>
-                        <span class="ability-tag">统计与异常</span>
-                    </div>
-                </div>
                 <div class="detail-section" style="margin-bottom:0;">
-                    <div class="detail-section-header"><span class="detail-section-icon">3</span><span class="detail-section-title">权限动作</span></div>
-                    <div class="ability-tags">
-                        <span class="ability-tag">查看</span>
-                        <span class="ability-tag">新增</span>
-                        <span class="ability-tag">编辑</span>
-                        <span class="ability-tag">审核</span>
-                        <span class="ability-tag">统计</span>
-                        <span class="ability-tag">导出</span>
+                    <div class="detail-section-header"><span class="detail-section-icon">2</span><span class="detail-section-title">主体关系树</span></div>
+                    <div class="relation-tree-view" id="relationDetailTree">
+                        <div class="tree-node">
+                            <div class="tree-node-header">
+                                <span class="tree-node-icon">▣</span>
+                                <span class="tree-node-name">贵州能源集团</span>
+                            </div>
+                            <div class="tree-children">
+                                <div class="tree-node">
+                                    <div class="tree-node-header">
+                                        <span class="tree-node-icon">◉</span>
+                                        <span class="tree-node-name">六盘水矿业集团</span>
+                                    </div>
+                                    <div class="tree-children">
+                                        <div class="tree-node">
+                                            <div class="tree-node-header">
+                                                <span class="tree-node-icon">○</span>
+                                                <span class="tree-node-name">贵州XX煤矿有限公司</span>
+                                            </div>
+                                        </div>
+                                        <div class="tree-node">
+                                            <div class="tree-node-header">
+                                                <span class="tree-node-icon">○</span>
+                                                <span class="tree-node-name">贵州安顺清源煤矿有限公司</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node">
+                                    <div class="tree-node-header">
+                                        <span class="tree-node-icon">◉</span>
+                                        <span class="tree-node-name">贵州XX矿业集团</span>
+                                    </div>
+                                    <div class="tree-children">
+                                        <div class="tree-node">
+                                            <div class="tree-node-header">
+                                                <span class="tree-node-icon">○</span>
+                                                <span class="tree-node-name">贵州毕节新源煤矿有限公司</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -9869,18 +9905,16 @@ function showRelationDetail(type) {
     document.getElementById('relationDetailType').textContent = type;
     const source = document.getElementById('relationDetailSource');
     const relationType = document.getElementById('relationDetailTypeText');
-    const domains = document.getElementById('relationDetailDomains');
     const map = {
-        '集团管理': ['贵州能源集团', '集团管理下属企业', ['全局授权', '人事管理', '宣教培训', '法律服务']],
-        '行政监管': ['贵州省能源监管局', '区域监管管理集团和下属企业', ['人事管理', '宣教培训']],
-        '跨辖区监管': ['贵州省能源监管局', '区域监管管理集团和下属企业', ['宣教培训']],
-        '机构监管': ['贵阳市能源监管局', '区域监管管理集团和下属企业', ['宣教培训', '法律服务']],
-        '服务合作': ['监管端', '集团管理下属企业', ['人事管理', '宣教培训']]
+        '集团管理': ['贵州能源集团', '集团管理下属企业'],
+        '行政监管': ['贵州省能源监管局', '区域监管管理集团和下属企业'],
+        '跨辖区监管': ['贵州省能源监管局', '区域监管管理集团和下属企业'],
+        '机构监管': ['贵阳市能源监管局', '区域监管管理集团和下属企业'],
+        '服务合作': ['监管端', '集团管理下属企业']
     };
     const data = map[type] || map['集团管理'];
     source.textContent = data[0];
     relationType.textContent = data[1];
-    domains.innerHTML = data[2].map(item => '<span class="ability-tag">' + item + '</span>').join('');
     document.getElementById('relationDetailModal').classList.add('show');
 }
 
