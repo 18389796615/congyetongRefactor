@@ -91,6 +91,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 .type-report{background:rgba(249,115,22,.1);color:#f97316}
 .type-form{background:rgba(34,197,94,.1);color:#22c55e}
 .type-contract{background:rgba(139,92,246,.1);color:#8b5cf6}
+.type-org{background:rgba(14,165,233,.1);color:var(--primary)}
 .status-active{background:var(--success-bg);color:var(--success)}
 .status-pending{background:rgba(245,158,11,.1);color:var(--warning)}
 .status-inactive{background:rgba(138,154,170,.1);color:var(--text-muted)}
@@ -119,6 +120,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background-
 .industry-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500}
 .industry-coal{background:rgba(239,68,68,.12);color:#dc2626}
 .industry-non-coal{background:rgba(34,197,94,.12);color:#16a34a}
+.industry-normal{background:rgba(148,163,184,.12);color:#64748b}
 .plan-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:500}
 .plan-ent{background:rgba(13,139,110,.1);color:var(--secondary)}
 .plan-inst{background:rgba(76,175,80,.1);color:#4caf50}
@@ -645,6 +647,7 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .relation-tag .remove-tag{margin-left:6px;cursor:pointer}
 .filter-hidden{display:none}
 .org-template-container{padding:20px}
+.org-template-toolbar{display:flex;gap:12px;margin-bottom:20px}
 .template-section{background:#fff;border-radius:8px;padding:24px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
 .section-header h3{font-size:16px;font-weight:600;color:var(--text-primary);margin:0}
@@ -670,6 +673,11 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .org-card.child-card{margin-top:12px;border-color:#e0e7ff;background:#faf5ff}
 .org-card.grandchild-card{margin-top:8px;border-color:#d1fae5;background:#f0fdf4}
 .card-header{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%)}
+.card-actions{display:flex;gap:8px;margin-left:auto}
+.action-btn{font-size:12px;color:var(--primary);cursor:pointer;padding:4px 8px;border-radius:4px;transition:all .2s}
+.action-btn:hover{background:rgba(14,165,233,.1)}
+.action-btn.action-delete{color:var(--danger)}
+.action-btn.action-delete:hover{background:rgba(239,68,68,.1)}
 .org-card.child-card .card-header{background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%)}
 .org-card.grandchild-card .card-header{background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%)}
 .expand-icon{font-size:10px;color:var(--text-muted);cursor:pointer;transition:transform .2s}
@@ -4370,20 +4378,54 @@ input[type="radio"]{cursor:pointer}
                                 <th>模板名称</th>
                                 <th>模板编码</th>
                                 <th>类型</th>
-                                <th>适用模块</th>
-                                <th>版本</th>
+                                <th>适用行业</th>
                                 <th>状态</th>
+                                <th>创建时间</th>
+                                <th>更新时间</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <td>煤矿行业组织架构</td>
+                                <td>COAL_ORG_STRUCT</td>
+                                <td><span class="type-badge type-org">组织架构</span></td>
+                                <td><span class="industry-badge industry-coal">煤矿行业</span></td>
+                                <td><span class="status-badge status-enabled">启用</span></td>
+                                <td>2025-01-10 10:00:00</td>
+                                <td>2025-01-15 14:30:00</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link" onclick="editOrgTemplate('coal')">编辑</span>
+                                        <span class="action-link" onclick="viewOrgTemplate('coal')">查看</span>
+                                        <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>普通企业组织架构</td>
+                                <td>NORMAL_ORG_STRUCT</td>
+                                <td><span class="type-badge type-org">普通企业</span></td>
+                                <td><span class="industry-badge industry-normal">普通行业</span></td>
+                                <td><span class="status-badge status-enabled">启用</span></td>
+                                <td>2025-01-12 09:00:00</td>
+                                <td>2025-01-14 16:00:00</td>
+                                <td>
+                                    <div class="action-links">
+                                        <span class="action-link" onclick="editOrgTemplate('normal')">编辑</span>
+                                        <span class="action-link" onclick="viewOrgTemplate('normal')">查看</span>
+                                        <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>员工入职登记表</td>
                                 <td>EMP_ONBOARD_FORM</td>
                                 <td><span class="type-badge type-form">表单模板</span></td>
-                                <td>人事管理</td>
-                                <td>v1.2</td>
+                                <td><span class="industry-badge industry-normal">普通行业</span></td>
                                 <td><span class="status-badge status-enabled">启用</span></td>
+                                <td>2025-01-08 11:00:00</td>
+                                <td>2025-01-13 10:00:00</td>
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
@@ -4396,9 +4438,10 @@ input[type="radio"]{cursor:pointer}
                                 <td>培训计划模板</td>
                                 <td>TRAIN_PLAN_TPL</td>
                                 <td><span class="type-badge type-document">文档模板</span></td>
-                                <td>培训管理</td>
-                                <td>v1.0</td>
+                                <td><span class="industry-badge industry-normal">普通行业</span></td>
                                 <td><span class="status-badge status-enabled">启用</span></td>
+                                <td>2025-01-05 14:00:00</td>
+                                <td>2025-01-11 09:00:00</td>
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
@@ -4411,9 +4454,10 @@ input[type="radio"]{cursor:pointer}
                                 <td>安全检查报告</td>
                                 <td>SAFETY_REPORT</td>
                                 <td><span class="type-badge type-report">报表模板</span></td>
-                                <td>安全管理</td>
-                                <td>v2.1</td>
+                                <td><span class="industry-badge industry-coal">煤矿行业</span></td>
                                 <td><span class="status-badge status-enabled">启用</span></td>
+                                <td>2025-01-03 16:00:00</td>
+                                <td>2025-01-10 15:00:00</td>
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
@@ -4426,29 +4470,15 @@ input[type="radio"]{cursor:pointer}
                                 <td>设备采购合同</td>
                                 <td>EQUIP_CONTRACT</td>
                                 <td><span class="type-badge type-contract">合同模板</span></td>
-                                <td>设备管理</td>
-                                <td>v1.0</td>
+                                <td><span class="industry-badge industry-normal">普通行业</span></td>
                                 <td><span class="status-badge status-inactive">禁用</span></td>
+                                <td>2024-12-20 10:00:00</td>
+                                <td>2024-12-25 11:00:00</td>
                                 <td>
                                     <div class="action-links">
                                         <span class="action-link" onclick="editTemplate()">编辑</span>
                                         <span class="action-link" onclick="viewTemplate(this)">查看</span>
                                         <span class="action-link action-success" onclick="toggleTemplateStatus(this)">启用</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>组织机构模板</td>
-                                <td>ORG_STRUCTURE_TPL</td>
-                                <td><span class="type-badge type-document">文档模板</span></td>
-                                <td>人事管理</td>
-                                <td>v1.0</td>
-                                <td><span class="status-badge status-enabled">启用</span></td>
-                                <td>
-                                    <div class="action-links">
-                                        <span class="action-link" onclick="editTemplate()">编辑</span>
-                                        <span class="action-link" onclick="viewOrgTemplate()">查看</span>
-                                        <span class="action-link action-warning" onclick="toggleTemplateStatus(this)">禁用</span>
                                     </div>
                                 </td>
                             </tr>
@@ -4531,14 +4561,18 @@ input[type="radio"]{cursor:pointer}
 
             <div class="page-section" id="page-org-template-view">
                 <div class="breadcrumb">
-                    <a onclick="switchPage('config-template','基础配置','模板管理')">基础配置</a><span>/</span><a onclick="switchPage('org-template-view','基础配置','组织结构模板')">组织结构模板</a><span>/</span><span class="current">模板预览</span>
+                    <a onclick="switchPage('config-template','基础配置','模板管理')">基础配置</a><span>/</span><a onclick="switchPage('org-template-view','基础配置','组织结构模板')">组织结构模板</a><span>/</span><span class="current" id="orgTemplateTitle">模板预览</span>
+                </div>
+                <div class="org-template-toolbar" id="orgTemplateToolbar">
+                    <button class="btn btn-primary" onclick="addOrgNode()">新增部门</button>
+                    <button class="btn btn-secondary" onclick="saveOrgTemplate()">保存模板</button>
                 </div>
                 <div class="org-template-container">
                     <div class="org-structure-wrapper">
                         <div class="org-structure-section">
                             <div class="section-header">
-                                <h3>煤矿行业组织架构</h3>
-                                <span class="industry-badge industry-coal">煤矿行业</span>
+                                <h3 id="orgTemplateName">煤矿行业组织架构</h3>
+                                <span class="industry-badge industry-coal" id="orgTemplateIndustry">煤矿行业</span>
                             </div>
                             <div class="org-card-grid" id="orgCardGrid">
                                 <div class="org-card" id="coal-group-hq">
@@ -4546,6 +4580,10 @@ input[type="radio"]{cursor:pointer}
                                         <span class="expand-icon" onclick="toggleOrgCard('coal-group-hq')">▶</span>
                                         <span class="card-title">集团总部</span>
                                         <span class="level-badge level-1">一级部门</span>
+                                        <div class="card-actions">
+                                            <span class="action-btn" onclick="editOrgNode('coal-group-hq')">编辑</span>
+                                            <span class="action-btn action-delete" onclick="deleteOrgNode('coal-group-hq')">删除</span>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="card-info">
@@ -4558,6 +4596,10 @@ input[type="radio"]{cursor:pointer}
                                                     <span class="expand-icon" onclick="toggleOrgCard('coal-safety')">▶</span>
                                                     <span class="card-title">安全监察部</span>
                                                     <span class="level-badge level-2">二级部门</span>
+                                                    <div class="card-actions">
+                                                        <span class="action-btn" onclick="editOrgNode('coal-safety')">编辑</span>
+                                                        <span class="action-btn action-delete" onclick="deleteOrgNode('coal-safety')">删除</span>
+                                                    </div>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="card-info">
@@ -4565,10 +4607,14 @@ input[type="radio"]{cursor:pointer}
                                                         <span>负责人：李部长</span>
                                                     </div>
                                                     <div class="card-children" id="coal-safety-children">
-                                                        <div class="org-card grandchild-card">
+                                                        <div class="org-card grandchild-card" id="coal-safety-check">
                                                             <div class="card-header">
                                                                 <span class="card-title">安全检查科</span>
                                                                 <span class="level-badge level-3">三级部门</span>
+                                                                <div class="card-actions">
+                                                                    <span class="action-btn" onclick="editOrgNode('coal-safety-check')">编辑</span>
+                                                                    <span class="action-btn action-delete" onclick="deleteOrgNode('coal-safety-check')">删除</span>
+                                                                </div>
                                                             </div>
                                                             <div class="card-body">
                                                                 <div class="card-info">
@@ -4576,10 +4622,14 @@ input[type="radio"]{cursor:pointer}
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="org-card grandchild-card">
+                                                        <div class="org-card grandchild-card" id="coal-safety-hazard">
                                                             <div class="card-header">
                                                                 <span class="card-title">隐患治理科</span>
                                                                 <span class="level-badge level-3">三级部门</span>
+                                                                <div class="card-actions">
+                                                                    <span class="action-btn" onclick="editOrgNode('coal-safety-hazard')">编辑</span>
+                                                                    <span class="action-btn action-delete" onclick="deleteOrgNode('coal-safety-hazard')">删除</span>
+                                                                </div>
                                                             </div>
                                                             <div class="card-body">
                                                                 <div class="card-info">
@@ -4595,6 +4645,10 @@ input[type="radio"]{cursor:pointer}
                                                     <span class="expand-icon" onclick="toggleOrgCard('coal-hr')">▶</span>
                                                     <span class="card-title">人力资源部</span>
                                                     <span class="level-badge level-2">二级部门</span>
+                                                    <div class="card-actions">
+                                                        <span class="action-btn" onclick="editOrgNode('coal-hr')">编辑</span>
+                                                        <span class="action-btn action-delete" onclick="deleteOrgNode('coal-hr')">删除</span>
+                                                    </div>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="card-info">
@@ -4602,10 +4656,14 @@ input[type="radio"]{cursor:pointer}
                                                         <span>负责人：王部长</span>
                                                     </div>
                                                     <div class="card-children" id="coal-hr-children">
-                                                        <div class="org-card grandchild-card">
+                                                        <div class="org-card grandchild-card" id="coal-hr-recruit">
                                                             <div class="card-header">
                                                                 <span class="card-title">招聘培训科</span>
                                                                 <span class="level-badge level-3">三级部门</span>
+                                                                <div class="card-actions">
+                                                                    <span class="action-btn" onclick="editOrgNode('coal-hr-recruit')">编辑</span>
+                                                                    <span class="action-btn action-delete" onclick="deleteOrgNode('coal-hr-recruit')">删除</span>
+                                                                </div>
                                                             </div>
                                                             <div class="card-body">
                                                                 <div class="card-info">
@@ -4621,6 +4679,10 @@ input[type="radio"]{cursor:pointer}
                                                     <span class="expand-icon" onclick="toggleOrgCard('coal-production')">▶</span>
                                                     <span class="card-title">生产技术部</span>
                                                     <span class="level-badge level-2">二级部门</span>
+                                                    <div class="card-actions">
+                                                        <span class="action-btn" onclick="editOrgNode('coal-production')">编辑</span>
+                                                        <span class="action-btn action-delete" onclick="deleteOrgNode('coal-production')">删除</span>
+                                                    </div>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="card-info">
@@ -4634,6 +4696,10 @@ input[type="radio"]{cursor:pointer}
                                                     <span class="expand-icon" onclick="toggleOrgCard('coal-mine-a')">▶</span>
                                                     <span class="card-title">下属煤矿A</span>
                                                     <span class="level-badge level-2">二级部门</span>
+                                                    <div class="card-actions">
+                                                        <span class="action-btn" onclick="editOrgNode('coal-mine-a')">编辑</span>
+                                                        <span class="action-btn action-delete" onclick="deleteOrgNode('coal-mine-a')">删除</span>
+                                                    </div>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="card-info">
@@ -4641,10 +4707,14 @@ input[type="radio"]{cursor:pointer}
                                                         <span>负责人：孙矿长</span>
                                                     </div>
                                                     <div class="card-children" id="coal-mine-a-children">
-                                                        <div class="org-card grandchild-card">
+                                                        <div class="org-card grandchild-card" id="coal-mine-a-mining">
                                                             <div class="card-header">
                                                                 <span class="card-title">综采一队</span>
                                                                 <span class="level-badge level-3">三级部门</span>
+                                                                <div class="card-actions">
+                                                                    <span class="action-btn" onclick="editOrgNode('coal-mine-a-mining')">编辑</span>
+                                                                    <span class="action-btn action-delete" onclick="deleteOrgNode('coal-mine-a-mining')">删除</span>
+                                                                </div>
                                                             </div>
                                                             <div class="card-body">
                                                                 <div class="card-info">
@@ -4652,10 +4722,14 @@ input[type="radio"]{cursor:pointer}
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="org-card grandchild-card">
+                                                        <div class="org-card grandchild-card" id="coal-mine-a-tunneling">
                                                             <div class="card-header">
                                                                 <span class="card-title">掘进队</span>
                                                                 <span class="level-badge level-3">三级部门</span>
+                                                                <div class="card-actions">
+                                                                    <span class="action-btn" onclick="editOrgNode('coal-mine-a-tunneling')">编辑</span>
+                                                                    <span class="action-btn action-delete" onclick="deleteOrgNode('coal-mine-a-tunneling')">删除</span>
+                                                                </div>
                                                             </div>
                                                             <div class="card-body">
                                                                 <div class="card-info">
@@ -4673,6 +4747,10 @@ input[type="radio"]{cursor:pointer}
                                     <div class="card-header">
                                         <span class="card-title">培训中心</span>
                                         <span class="level-badge level-2">二级部门</span>
+                                        <div class="card-actions">
+                                            <span class="action-btn" onclick="editOrgNode('coal-training')">编辑</span>
+                                            <span class="action-btn action-delete" onclick="deleteOrgNode('coal-training')">删除</span>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="card-info">
@@ -4685,6 +4763,10 @@ input[type="radio"]{cursor:pointer}
                                     <div class="card-header">
                                         <span class="card-title">设备维修厂</span>
                                         <span class="level-badge level-2">二级部门</span>
+                                        <div class="card-actions">
+                                            <span class="action-btn" onclick="editOrgNode('coal-repair')">编辑</span>
+                                            <span class="action-btn action-delete" onclick="deleteOrgNode('coal-repair')">删除</span>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="card-info">
@@ -9388,8 +9470,164 @@ function viewTemplate(actionEl) {
     showToast(`查看模板：${templateName}`, 'info');
 }
 
-function viewOrgTemplate() {
+function viewOrgTemplate(industry) {
+    const title = document.getElementById('orgTemplateTitle');
+    const name = document.getElementById('orgTemplateName');
+    const industryBadge = document.getElementById('orgTemplateIndustry');
+    
+    if (industry === 'coal') {
+        title.textContent = '煤矿行业组织架构';
+        name.textContent = '煤矿行业组织架构';
+        industryBadge.textContent = '煤矿行业';
+        industryBadge.className = 'industry-badge industry-coal';
+        document.getElementById('orgCardGrid').style.display = 'block';
+        document.getElementById('nonCoalCardGrid').style.display = 'none';
+    } else {
+        title.textContent = '普通企业组织架构';
+        name.textContent = '普通企业组织架构';
+        industryBadge.textContent = '普通行业';
+        industryBadge.className = 'industry-badge industry-normal';
+        document.getElementById('orgCardGrid').style.display = 'none';
+        document.getElementById('nonCoalCardGrid').style.display = 'block';
+    }
     switchPage('org-template-view', '基础配置', '组织结构模板');
+}
+
+function editOrgTemplate(industry) {
+    viewOrgTemplate(industry);
+    showToast('已进入编辑模式，可进行新增、删除和编辑操作', 'info');
+}
+
+function addOrgNode() {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay show';
+    modal.innerHTML = `
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">新增部门</span>
+                <button class="modal-close" onclick="document.body.removeChild(this.closest('.modal-overlay'))">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">部门名称 *</label>
+                    <input type="text" class="form-input" id="newNodeName" placeholder="请输入部门名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">部门级别</label>
+                    <select class="form-select" id="newNodeLevel">
+                        <option value="level-1">一级部门</option>
+                        <option value="level-2">二级部门</option>
+                        <option value="level-3">三级部门</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">职责描述</label>
+                    <textarea class="form-input" id="newNodeDesc" rows="3" placeholder="请输入职责描述"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">负责人</label>
+                    <input type="text" class="form-input" id="newNodeManager" placeholder="请输入负责人">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="document.body.removeChild(this.closest('.modal-overlay'))">取消</button>
+                <button class="btn btn-primary" onclick="saveNewOrgNode()">保存</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function saveNewOrgNode() {
+    const name = document.getElementById('newNodeName').value;
+    const level = document.getElementById('newNodeLevel').value;
+    const desc = document.getElementById('newNodeDesc').value;
+    const manager = document.getElementById('newNodeManager').value;
+    
+    if (!name) {
+        showToast('请输入部门名称', 'error');
+        return;
+    }
+    
+    showToast('部门新增成功', 'success');
+    document.body.removeChild(document.querySelector('.modal-overlay'));
+}
+
+function editOrgNode(nodeId) {
+    const card = document.getElementById(nodeId);
+    if (!card) return;
+    
+    const title = card.querySelector('.card-title').textContent;
+    const levelBadge = card.querySelector('.level-badge');
+    const level = levelBadge ? levelBadge.textContent : '二级部门';
+    const info = card.querySelector('.card-info');
+    const desc = info ? info.querySelector('span')?.textContent || '' : '';
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay show';
+    modal.innerHTML = `
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">编辑部门</span>
+                <button class="modal-close" onclick="document.body.removeChild(this.closest('.modal-overlay'))">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">部门名称 *</label>
+                    <input type="text" class="form-input" id="editNodeName" value="${title}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">职责描述</label>
+                    <textarea class="form-input" id="editNodeDesc" rows="3">${desc}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">负责人</label>
+                    <input type="text" class="form-input" id="editNodeManager" placeholder="请输入负责人">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="document.body.removeChild(this.closest('.modal-overlay'))">取消</button>
+                <button class="btn btn-primary" onclick="saveEditOrgNode('${nodeId}')">保存</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function saveEditOrgNode(nodeId) {
+    const card = document.getElementById(nodeId);
+    if (!card) return;
+    
+    const name = document.getElementById('editNodeName').value;
+    const desc = document.getElementById('editNodeDesc').value;
+    
+    if (!name) {
+        showToast('请输入部门名称', 'error');
+        return;
+    }
+    
+    card.querySelector('.card-title').textContent = name;
+    const info = card.querySelector('.card-info');
+    if (info && desc) {
+        info.querySelector('span').textContent = desc;
+    }
+    
+    showToast('部门信息已更新', 'success');
+    document.body.removeChild(document.querySelector('.modal-overlay'));
+}
+
+function deleteOrgNode(nodeId) {
+    if (confirm('确定要删除这个部门吗？')) {
+        const card = document.getElementById(nodeId);
+        if (card) {
+            card.remove();
+            showToast('部门已删除', 'success');
+        }
+    }
+}
+
+function saveOrgTemplate() {
+    showToast('组织架构模板已保存', 'success');
 }
 
 function toggleOrgCard(cardId) {
