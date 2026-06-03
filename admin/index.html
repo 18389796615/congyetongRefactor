@@ -379,6 +379,11 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .service-kpi.warning .service-kpi-value{color:var(--warning)}
 .service-kpi.danger .service-kpi-value{color:var(--danger)}
 .service-kpi.success .service-kpi-value{color:var(--success)}
+.service-tabs{display:flex;gap:8px;margin-bottom:20px;background:rgba(255,255,255,.85);border:1px solid rgba(14,165,233,.1);border-radius:12px;padding:6px}
+.service-tab{padding:10px 24px;border-radius:10px;font-size:14px;color:var(--text-secondary);cursor:pointer;transition:all .2s}
+.service-tab:hover{background:rgba(14,165,233,.08);color:var(--primary)}
+.service-tab.active{background:var(--primary);color:#fff;font-weight:600}
+.service-tab-content{min-height:300px}
 .service-filter{margin-bottom:16px}
 .service-workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;margin-bottom:20px}
 .service-main-stack{display:flex;flex-direction:column;gap:20px;min-width:0}
@@ -416,6 +421,8 @@ tr:hover td{background:rgba(14,165,233,.06);transition:all .2s}
 .relation-tab:hover,.relation-tab.active{background:var(--primary-bg);color:var(--primary);border-color:rgba(14,165,233,.25);font-weight:600}
 .relation-help-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:6px;border-radius:50%;background:rgba(14,165,233,.12);color:var(--primary);font-size:12px;font-weight:700}
 .relation-help-icon:hover{background:var(--primary);color:#fff}
+.help-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:6px;border-radius:50%;background:rgba(14,165,233,.12);color:var(--primary);font-size:12px;font-weight:700;cursor:help}
+.help-icon:hover{background:var(--primary);color:#fff}
 .relation-section{display:none}
 .relation-section.active{display:block}
 .scope-badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:14px;background:var(--primary-bg);color:var(--primary);font-size:11px;font-weight:600;margin:2px 4px 2px 0}
@@ -1346,7 +1353,6 @@ input[type="radio"]{cursor:pointer}
                                 <tr>
                                     <th>主体</th>
                                     <th>关系类型</th>
-                                    <th>数据域</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -1354,13 +1360,11 @@ input[type="radio"]{cursor:pointer}
                                 <tr>
                                     <td>贵州能源集团</td>
                                     <td><span class="type-badge type-group">集团管理下属企业</span></td>
-                                    <td>人事管理、宣教培训、法律服务</td>
                                     <td><div class="action-links"><span class="action-link" onclick="showRelationDetail('集团管理')">查看</span><span class="action-link" onclick="showAddRelationModal('group')">编辑</span><span class="action-link" onclick="removeRelation(this)">删除</span></div></td>
                                 </tr>
                                 <tr>
                                     <td>六盘水矿业集团</td>
                                     <td><span class="type-badge type-group">集团管理下属企业</span></td>
-                                    <td>人事管理、安全管理</td>
                                     <td><div class="action-links"><span class="action-link" onclick="showRelationDetail('集团管理')">查看</span><span class="action-link" onclick="showAddRelationModal('group')">编辑</span><span class="action-link" onclick="removeRelation(this)">删除</span></div></td>
                                 </tr>
                             </tbody>
@@ -2081,7 +2085,7 @@ input[type="radio"]{cursor:pointer}
                         <div class="service-kpi-note">含服务中与已恢复主体</div>
                     </div>
                     <div class="service-kpi warning">
-                        <div class="service-kpi-label">即将到期</div>
+                        <div class="service-kpi-label">即将到期<span class="help-icon" title="服务到期前30天为技能到期" onclick="showServiceExpireTip()">?</span></div>
                         <div class="service-kpi-value">1</div>
                         <div class="service-kpi-note">需重点跟进续费</div>
                     </div>
@@ -2120,242 +2124,231 @@ input[type="radio"]{cursor:pointer}
                         <button class="btn btn-primary" onclick="searchPackageServices()">查询</button>
                     </div>
                 </div>
-                <div class="service-workspace">
-                    <div class="service-main-stack">
-                <div class="data-table" style="margin-bottom:20px;">
-                    <div class="table-header">
-                        <div>
-                            <div class="table-title">当前服务实例</div>
-                            <div class="table-subtitle">按主体查看正在生效或待处理的套餐服务，操作入口收敛在每一条服务实例上</div>
+                <div class="service-tabs">
+                    <div class="service-tab active" onclick="switchServiceTab(this, 'package')">服务管理</div>
+                    <div class="service-tab" onclick="switchServiceTab(this, 'records')">运营记录</div>
+                </div>
+                <div class="service-tab-content" id="packageTab">
+                    <div class="data-table">
+                        <div class="table-header">
+                            <div>
+                                <div class="table-title">当前服务实例</div>
+                                <div class="table-subtitle">按主体查看正在生效或待处理的套餐服务，操作入口收敛在每一条服务实例上</div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>主体名称</th>
+                                    <th>主体类型</th>
+                                    <th>当前套餐</th>
+                                    <th>服务开始</th>
+                                    <th>服务结束</th>
+                                    <th>剩余天数</th>
+                                    <th>能力数</th>
+                                    <th>服务状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviceTableBody">
+                                <tr data-subject="贵州XX煤矿有限公司" data-type="煤矿企业" data-package="企业标准套餐" data-end="2027-02-28" data-price="16800" data-abilities="4" data-resource="人员 320/500，管理员 4/5，存储 28/50GB">
+                                    <td>贵州XX煤矿有限公司</td>
+                                    <td>煤矿企业</td>
+                                    <td class="service-package">企业标准套餐</td>
+                                    <td>2026-03-01</td>
+                                    <td class="service-end">2027-02-28</td>
+                                    <td class="service-left-days">285天</td>
+                                    <td class="service-abilities">4项</td>
+                                    <td class="service-status"><span class="status-badge status-enabled">服务中</span></td>
+                                    <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
+                                </tr>
+                                <tr data-subject="贵州能源集团" data-type="煤矿集团" data-package="集团协同套餐" data-end="2026-12-31" data-price="42800" data-abilities="6" data-resource="人员 1260/2000，管理员 12/20，存储 110/200GB">
+                                    <td>贵州能源集团</td>
+                                    <td>煤矿集团</td>
+                                    <td class="service-package">集团协同套餐</td>
+                                    <td>2026-01-01</td>
+                                    <td class="service-end">2026-12-31</td>
+                                    <td class="service-left-days">226天</td>
+                                    <td class="service-abilities">6项</td>
+                                    <td class="service-status"><span class="status-badge status-pending">即将到期</span></td>
+                                    <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
+                                </tr>
+                                <tr data-subject="贵州XX职业培训中心" data-type="培训机构" data-package="培训机构套餐" data-end="2026-04-30" data-price="8800" data-abilities="4" data-resource="人员 180/300，管理员 5/8，存储 56/100GB">
+                                    <td>贵州XX职业培训中心</td>
+                                    <td>培训机构</td>
+                                    <td class="service-package">培训机构套餐</td>
+                                    <td>2025-11-01</td>
+                                    <td class="service-end">2026-04-30</td>
+                                    <td class="service-left-days">已过期</td>
+                                    <td class="service-abilities">4项</td>
+                                    <td class="service-status"><span class="status-badge status-expired">已过期</span></td>
+                                    <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
+                                </tr>
+                                <tr data-subject="贵州XX煤矿科技有限公司" data-type="煤矿企业" data-package="企业标准套餐" data-end="2026-04-30" data-price="16800" data-abilities="4" data-resource="人员 90/500，管理员 2/5，存储 12/50GB">
+                                    <td>贵州XX煤矿科技有限公司</td>
+                                    <td>煤矿企业</td>
+                                    <td class="service-package">企业标准套餐</td>
+                                    <td>2025-05-01</td>
+                                    <td class="service-end">2026-04-30</td>
+                                    <td class="service-left-days">已过期</td>
+                                    <td class="service-abilities">4项</td>
+                                    <td class="service-status"><span class="status-badge status-expired">已过期</span></td>
+                                    <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="service-tab-content" id="recordsTab" style="display:none;">
+                    <div class="record-toolbar">
+                        <div class="record-quick-filter">
+                            <button class="quick-chip active" onclick="applyRecordQuickFilter(this,'all','')">全部记录</button>
+                            <button class="quick-chip" onclick="applyRecordQuickFilter(this,'range','month')">本月操作</button>
+                            <button class="quick-chip" onclick="applyRecordQuickFilter(this,'range','week')">近7天</button>
+                            <button class="quick-chip" onclick="applyRecordQuickFilter(this,'action','renew')">只看续费</button>
+                            <button class="quick-chip" onclick="applyRecordQuickFilter(this,'action','change')">只看变更</button>
+                            <button class="quick-chip" onclick="applyRecordQuickFilter(this,'status','risk')">异常/停用</button>
                         </div>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>主体名称</th>
-                                <th>主体类型</th>
-                                <th>当前套餐</th>
-                                <th>服务开始</th>
-                                <th>服务结束</th>
-                                <th>剩余天数</th>
-                                <th>能力数</th>
-                                <th>服务状态</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="serviceTableBody">
-                            <tr data-subject="贵州XX煤矿有限公司" data-type="煤矿企业" data-package="企业标准套餐" data-end="2027-02-28" data-price="16800" data-abilities="4" data-resource="人员 320/500，管理员 4/5，存储 28/50GB">
-                                <td>贵州XX煤矿有限公司</td>
-                                <td>煤矿企业</td>
-                                <td class="service-package">企业标准套餐</td>
-                                <td>2026-03-01</td>
-                                <td class="service-end">2027-02-28</td>
-                                <td class="service-left-days">285天</td>
-                                <td class="service-abilities">4项</td>
-                                <td class="service-status"><span class="status-badge status-enabled">服务中</span></td>
-                                <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
-                            </tr>
-                            <tr data-subject="贵州能源集团" data-type="煤矿集团" data-package="集团协同套餐" data-end="2026-12-31" data-price="42800" data-abilities="6" data-resource="人员 1260/2000，管理员 12/20，存储 110/200GB">
-                                <td>贵州能源集团</td>
-                                <td>煤矿集团</td>
-                                <td class="service-package">集团协同套餐</td>
-                                <td>2026-01-01</td>
-                                <td class="service-end">2026-12-31</td>
-                                <td class="service-left-days">226天</td>
-                                <td class="service-abilities">6项</td>
-                                <td class="service-status"><span class="status-badge status-pending">即将到期</span></td>
-                                <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
-                            </tr>
-                            <tr data-subject="贵州XX职业培训中心" data-type="培训机构" data-package="培训机构套餐" data-end="2026-04-30" data-price="8800" data-abilities="4" data-resource="人员 180/300，管理员 5/8，存储 56/100GB">
-                                <td>贵州XX职业培训中心</td>
-                                <td>培训机构</td>
-                                <td class="service-package">培训机构套餐</td>
-                                <td>2025-11-01</td>
-                                <td class="service-end">2026-04-30</td>
-                                <td class="service-left-days">已过期</td>
-                                <td class="service-abilities">4项</td>
-                                <td class="service-status"><span class="status-badge status-expired">已过期</span></td>
-                                <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
-                            </tr>
-                            <tr data-subject="贵州XX煤矿科技有限公司" data-type="煤矿企业" data-package="企业标准套餐" data-end="2026-04-30" data-price="16800" data-abilities="4" data-resource="人员 90/500，管理员 2/5，存储 12/50GB">
-                                <td>贵州XX煤矿科技有限公司</td>
-                                <td>煤矿企业</td>
-                                <td class="service-package">企业标准套餐</td>
-                                <td>2025-05-01</td>
-                                <td class="service-end">2026-04-30</td>
-                                <td class="service-left-days">已过期</td>
-                                <td class="service-abilities">4项</td>
-                                <td class="service-status"><span class="status-badge status-expired">已过期</span></td>
-                                <td><div class="action-links"><span class="action-link" onclick="showServiceDetail(this)">详情</span><span class="action-link" onclick="openServiceRecords(this.closest('tr').dataset.subject)">记录</span><span class="action-link" onclick="showRenewModal(this)">续费</span><span class="action-link" onclick="showChangePackageModal(this)">变更</span><span class="action-link" onclick="showAppendAbilityModal(this)">追加</span><span class="action-link danger" onclick="showDisableServiceModal(this)">停用</span></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page-section" id="page-package-service-records">
-                <div class="breadcrumb">
-                    <a onclick="switchPage('package-service-manage','产品配置','套餐服务管理')">套餐服务管理</a><span>/</span><span class="current">运营记录</span>
-                </div>
-                <div class="service-hero">
-                    <div>
-                        <div class="service-hero-title">运营记录</div>
-                        <div class="service-hero-subtitle">沉淀套餐开通、续费、变更、追加、停用和恢复记录，支持按主体、业务动作、时间范围和处理状态快速定位。</div>
-                    </div>
-                    <div class="service-hero-actions">
-                        <button class="btn btn-secondary" onclick="switchPage('package-service-manage','产品配置','套餐服务管理')">返回服务管理</button>
-                    </div>
-                </div>
-                <div class="record-toolbar">
-                    <div class="record-quick-filter">
-                        <button class="quick-chip active" onclick="applyRecordQuickFilter(this,'all','')">全部记录</button>
-                        <button class="quick-chip" onclick="applyRecordQuickFilter(this,'range','month')">本月操作</button>
-                        <button class="quick-chip" onclick="applyRecordQuickFilter(this,'range','week')">近7天</button>
-                        <button class="quick-chip" onclick="applyRecordQuickFilter(this,'action','renew')">只看续费</button>
-                        <button class="quick-chip" onclick="applyRecordQuickFilter(this,'action','change')">只看变更</button>
-                        <button class="quick-chip" onclick="applyRecordQuickFilter(this,'status','risk')">异常/停用</button>
-                    </div>
-                </div>
-                <div class="filter-bar record-filter-bar">
-                    <div class="filter-item">
-                        <select class="form-select filter-select" id="recordSubjectFilter">
-                            <option value="">全部主体</option>
-                            <option value="贵州XX煤矿有限公司">贵州XX煤矿有限公司</option>
-                            <option value="贵州能源集团">贵州能源集团</option>
-                            <option value="贵州XX职业培训中心">贵州XX职业培训中心</option>
-                            <option value="贵州XX煤矿科技有限公司">贵州XX煤矿科技有限公司</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <select class="form-select filter-select" id="recordTypeFilter" onchange="selectRecordTypeFromFilter()">
-                            <option value="">全部动作</option>
-                            <option value="open">开通</option>
-                            <option value="renew">续费</option>
-                            <option value="change">变更</option>
-                            <option value="append">追加</option>
-                            <option value="disable">停用</option>
-                            <option value="restore">恢复</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <select class="form-select filter-select" id="recordRangeFilter">
-                            <option value="">全部时间</option>
-                            <option value="week">近7天</option>
-                            <option value="month">本月</option>
-                            <option value="quarter">本季度</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <select class="form-select filter-select" id="recordStatusFilter">
-                            <option value="">全部状态</option>
-                            <option value="success">成功/完成</option>
-                            <option value="risk">异常/停用</option>
-                        </select>
-                    </div>
-                    <div class="filter-actions">
-                        <button class="btn btn-secondary" onclick="resetRecordFilters()">重置</button>
-                        <button class="btn btn-primary" onclick="searchServiceRecords()">查询</button>
-                    </div>
-                </div>
-                <div class="data-table service-records">
-                    <div class="table-header">
-                        <div>
-                            <div class="table-title">运营记录中心</div>
-                            <div class="table-subtitle">开通、续费、变更、追加、停用、恢复记录合并展示，筛选条件用于快速定位</div>
+                    <div class="filter-bar record-filter-bar">
+                        <div class="filter-item">
+                            <select class="form-select filter-select" id="recordSubjectFilter">
+                                <option value="">全部主体</option>
+                                <option value="贵州XX煤矿有限公司">贵州XX煤矿有限公司</option>
+                                <option value="贵州能源集团">贵州能源集团</option>
+                                <option value="贵州XX职业培训中心">贵州XX职业培训中心</option>
+                                <option value="贵州XX煤矿科技有限公司">贵州XX煤矿科技有限公司</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <select class="form-select filter-select" id="recordTypeFilter" onchange="selectRecordTypeFromFilter()">
+                                <option value="">全部动作</option>
+                                <option value="open">开通</option>
+                                <option value="renew">续费</option>
+                                <option value="change">变更</option>
+                                <option value="append">追加</option>
+                                <option value="disable">停用</option>
+                                <option value="restore">恢复</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <select class="form-select filter-select" id="recordRangeFilter">
+                                <option value="">全部时间</option>
+                                <option value="week">近7天</option>
+                                <option value="month">本月</option>
+                                <option value="quarter">本季度</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <select class="form-select filter-select" id="recordStatusFilter">
+                                <option value="">全部状态</option>
+                                <option value="success">成功/完成</option>
+                                <option value="risk">异常/停用</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn btn-secondary" onclick="resetRecordFilters()">重置</button>
+                            <button class="btn btn-primary" onclick="searchServiceRecords()">查询</button>
                         </div>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>主体名称</th>
-                                <th>套餐名称</th>
-                                <th>产品包</th>
-                                <th>能力包</th>
-                                <th>动作类型</th>
-                                <th>变更内容</th>
-                                <th>资源/权限影响</th>
-                                <th>处理结果</th>
-                                <th>操作时间</th>
-                                <th>操作人</th>
-                            </tr>
-                        </thead>
-                        <tbody id="serviceRecordTableBody">
-                            <tr data-type="open" data-status="success">
-                                <td>贵州XX煤矿有限公司</td>
-                                <td class="service-package">企业标准套餐</td>
-                                <td>人员管理包、宣教培训包</td>
-                                <td>短信包、人脸识别、资源包</td>
-                                <td><span class="status-badge status-enabled">开通</span></td>
-                                <td>新主体入驻开通 12 个月服务</td>
-                                <td>初始化 4 个能力包、企业管理员角色、50GB 存储</td>
-                                <td><span class="status-badge status-enabled">开通成功</span></td>
-                                <td>2026-03-01 10:12</td>
-                                <td>平台运维-王五</td>
-                            </tr>
-                            <tr data-type="renew" data-status="success">
-                                <td>贵州能源集团</td>
-                                <td>集团协同套餐</td>
-                                <td>人员管理包、宣教培训包、招就服务包、法律服务包</td>
-                                <td>人脸识别、资源包、简历查看次数</td>
-                                <td><span class="status-badge status-enabled">续费</span></td>
-                                <td>服务结束时间 2025-12-31 延长至 2026-12-31</td>
-                                <td>保留原套餐能力，续费金额 ¥42,800</td>
-                                <td><span class="status-badge status-enabled">续费成功</span></td>
-                                <td>2026-01-01 09:20</td>
-                                <td>平台运维-李四</td>
-                            </tr>
-                            <tr data-type="change" data-status="success">
-                                <td>贵州XX煤矿有限公司</td>
-                                <td>集团协同套餐</td>
-                                <td>人员管理包、宣教培训包、招就服务包、法律服务包</td>
-                                <td>人脸识别、资源包、简历查看次数</td>
-                                <td><span class="status-badge status-enabled">变更</span></td>
-                                <td>企业标准套餐变更为集团协同套餐</td>
-                                <td>新增集团协同能力，人数 500→2000，存储 50GB→200GB</td>
-                                <td><span class="status-badge status-enabled">同步完成</span></td>
-                                <td>2026-05-10 14:36</td>
-                                <td>平台运维-赵六</td>
-                            </tr>
-                            <tr data-type="append" data-status="success">
-                                <td>贵州能源集团</td>
-                                <td>集团协同套餐</td>
-                                <td>人员管理包、宣教培训包、招就服务包、法律服务包</td>
-                                <td>人脸识别、资源包、简历查看次数、AI 能力包</td>
-                                <td><span class="status-badge status-enabled">追加</span></td>
-                                <td>临时追加 AI 能力包</td>
-                                <td>菜单权限与能力额度已更新</td>
-                                <td><span class="status-badge status-enabled">追加完成</span></td>
-                                <td>2026-05-12 11:05</td>
-                                <td>平台运维-王五</td>
-                            </tr>
-                            <tr data-type="disable" data-status="risk">
-                                <td>贵州XX职业培训中心</td>
-                                <td>培训机构套餐</td>
-                                <td>宣教培训包</td>
-                                <td>短信包、资源包、课程包</td>
-                                <td><span class="status-badge status-disabled">停用</span></td>
-                                <td>服务到期未续费</td>
-                                <td>菜单能力、功能权限、数据空间访问已关闭</td>
-                                <td><span class="status-badge status-disabled">已停用</span></td>
-                                <td>2026-05-01 18:00</td>
-                                <td>系统自动</td>
-                            </tr>
-                            <tr data-type="restore" data-status="success">
-                                <td>贵州XX煤矿有限公司</td>
-                                <td>企业标准套餐</td>
-                                <td>人员管理包、宣教培训包</td>
-                                <td>短信包、人脸识别、资源包</td>
-                                <td><span class="status-badge status-enabled">恢复</span></td>
-                                <td>恢复主体套餐服务</td>
-                                <td>能力重新加载，菜单权限已恢复</td>
-                                <td><span class="status-badge status-enabled">使用中</span></td>
-                                <td>2026-05-15 09:30</td>
-                                <td>平台运维-李四</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="data-table service-records">
+                        <div class="table-header">
+                            <div>
+                                <div class="table-title">运营记录中心</div>
+                                <div class="table-subtitle">开通、续费、变更、追加、停用、恢复记录合并展示，筛选条件用于快速定位</div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>主体名称</th>
+                                    <th>套餐名称</th>
+                                    <th>产品包</th>
+                                    <th>能力包</th>
+                                    <th>动作类型</th>
+                                    <th>变更内容</th>
+                                    <th>资源/权限影响</th>
+                                    <th>处理结果</th>
+                                    <th>操作时间</th>
+                                    <th>操作人</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviceRecordTableBody">
+                                <tr data-type="open" data-status="success">
+                                    <td>贵州XX煤矿有限公司</td>
+                                    <td class="service-package">企业标准套餐</td>
+                                    <td>人员管理包、宣教培训包</td>
+                                    <td>短信包、人脸识别、资源包</td>
+                                    <td><span class="status-badge status-enabled">开通</span></td>
+                                    <td>新主体入驻开通 12 个月服务</td>
+                                    <td>初始化 4 个能力包、企业管理员角色、50GB 存储</td>
+                                    <td><span class="status-badge status-enabled">开通成功</span></td>
+                                    <td>2026-03-01 10:12</td>
+                                    <td>平台运维-王五</td>
+                                </tr>
+                                <tr data-type="renew" data-status="success">
+                                    <td>贵州能源集团</td>
+                                    <td>集团协同套餐</td>
+                                    <td>人员管理包、宣教培训包、招就服务包、法律服务包</td>
+                                    <td>人脸识别、资源包、简历查看次数</td>
+                                    <td><span class="status-badge status-enabled">续费</span></td>
+                                    <td>服务结束时间 2025-12-31 延长至 2026-12-31</td>
+                                    <td>保留原套餐能力，续费金额 ¥42,800</td>
+                                    <td><span class="status-badge status-enabled">续费成功</span></td>
+                                    <td>2026-01-01 09:20</td>
+                                    <td>平台运维-李四</td>
+                                </tr>
+                                <tr data-type="change" data-status="success">
+                                    <td>贵州XX煤矿有限公司</td>
+                                    <td>集团协同套餐</td>
+                                    <td>人员管理包、宣教培训包、招就服务包、法律服务包</td>
+                                    <td>人脸识别、资源包、简历查看次数</td>
+                                    <td><span class="status-badge status-enabled">变更</span></td>
+                                    <td>企业标准套餐变更为集团协同套餐</td>
+                                    <td>新增集团协同能力，人数 500→2000，存储 50GB→200GB</td>
+                                    <td><span class="status-badge status-enabled">同步完成</span></td>
+                                    <td>2026-05-10 14:36</td>
+                                    <td>平台运维-赵六</td>
+                                </tr>
+                                <tr data-type="append" data-status="success">
+                                    <td>贵州能源集团</td>
+                                    <td>集团协同套餐</td>
+                                    <td>人员管理包、宣教培训包、招就服务包、法律服务包</td>
+                                    <td>人脸识别、资源包、简历查看次数、AI 能力包</td>
+                                    <td><span class="status-badge status-enabled">追加</span></td>
+                                    <td>临时追加 AI 能力包</td>
+                                    <td>菜单权限与能力额度已更新</td>
+                                    <td><span class="status-badge status-enabled">追加完成</span></td>
+                                    <td>2026-05-12 11:05</td>
+                                    <td>平台运维-王五</td>
+                                </tr>
+                                <tr data-type="disable" data-status="risk">
+                                    <td>贵州XX职业培训中心</td>
+                                    <td>培训机构套餐</td>
+                                    <td>宣教培训包</td>
+                                    <td>短信包、资源包、课程包</td>
+                                    <td><span class="status-badge status-disabled">停用</span></td>
+                                    <td>服务到期未续费</td>
+                                    <td>菜单能力、功能权限、数据空间访问已关闭</td>
+                                    <td><span class="status-badge status-disabled">已停用</span></td>
+                                    <td>2026-05-01 18:00</td>
+                                    <td>系统自动</td>
+                                </tr>
+                                <tr data-type="restore" data-status="success">
+                                    <td>贵州XX煤矿有限公司</td>
+                                    <td>企业标准套餐</td>
+                                    <td>人员管理包、宣教培训包</td>
+                                    <td>短信包、人脸识别、资源包</td>
+                                    <td><span class="status-badge status-enabled">恢复</span></td>
+                                    <td>恢复主体套餐服务</td>
+                                    <td>能力重新加载，菜单权限已恢复</td>
+                                    <td><span class="status-badge status-enabled">使用中</span></td>
+                                    <td>2026-05-15 09:30</td>
+                                    <td>平台运维-李四</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -9618,6 +9611,10 @@ function showRelationGuide() {
     document.getElementById('relationGuideModal').classList.add('show');
 }
 
+function showServiceExpireTip() {
+    showToast('服务到期前30天为技能到期', 'success');
+}
+
 function showAddRelationModal(type) {
     const modal = document.getElementById('addRelationModal');
     const title = document.getElementById('relationFormTitle');
@@ -10834,6 +10831,14 @@ function resetServiceFilters() {
     document.getElementById('serviceStatusFilter').value = '';
     document.querySelectorAll('#serviceTableBody tr').forEach(row => row.style.display = '');
     showToast('套餐服务筛选条件已重置', 'success');
+}
+
+function switchServiceTab(tab, type) {
+    document.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.service-tab-content').forEach(c => c.style.display = 'none');
+    
+    tab.classList.add('active');
+    document.getElementById(type + 'Tab').style.display = 'block';
 }
 
 function searchPackageServices() {
