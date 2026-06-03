@@ -9811,22 +9811,7 @@ function updateRelationTypeFields() {
 }
 
 function refreshRelationTargets() {
-    const type = document.getElementById('relationTypeSelect').value;
-    const sourceValue = document.getElementById('relationSourceSubject').value;
-    let targets = getSubjectListByTypes(['煤矿集团', '煤矿企业']);
-    if (type === 'group') {
-        targets = targets.filter(item => item.name !== sourceValue);
-    } else {
-        const regionMap = { '贵阳市': ['贵阳市', '观山湖区'], '遵义市': ['遵义市', '红花岗区'], '六盘水市': ['六盘水市', '钟山区'], '毕节市': ['毕节市', '七星关区'] };
-        const keywords = regionMap[sourceValue] || [];
-        targets = targets.filter(item => {
-            const row = Array.from(document.querySelectorAll('#page-enterprise-list tbody tr')).find(tr => tr.children[0]?.textContent.trim() === item.name);
-            const city = row?.children[4]?.textContent.trim() || '';
-            const county = row?.children[5]?.textContent.trim() || '';
-            return keywords.includes(city) || keywords.includes(county);
-        });
-    }
-    renderRelationTargetTree(targets);
+    // 主体列表已在模态框中静态定义，无需动态刷新
 }
 
 function setRelationTargetChecks(checked) {
@@ -9845,48 +9830,6 @@ function toggleRelationTargetGroup(checkbox) {
     });
     refreshSelectionSurfaces();
     updateRelationSelectionSummary();
-}
-
-function filterRelationTargets() {
-    const searchText = document.getElementById('relationTargetSearch').value.toLowerCase();
-    const items = document.querySelectorAll('#relationTargetList label');
-    
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(searchText) ? 'block' : 'none';
-    });
-}
-
-function clearRelationTargets() {
-    document.querySelectorAll('input[name="relationTarget"]').forEach(item => {
-        item.checked = false;
-    });
-    updateRelationTargetSelection();
-}
-
-function updateRelationTargetSelection() {
-    const selectedItems = document.querySelectorAll('input[name="relationTarget"]:checked');
-    const selectedCount = selectedItems.length;
-    const selectedLabel = document.querySelector('.multi-select-label');
-    const selectedContainer = document.getElementById('selectedRelationTargets');
-    
-    selectedLabel.textContent = `已选择 ${selectedCount} 个下属企业`;
-    
-    selectedContainer.innerHTML = '';
-    selectedItems.forEach(item => {
-        const tag = document.createElement('span');
-        tag.className = 'selected-tag';
-        tag.innerHTML = `${item.nextSibling.textContent} <span class="remove-tag" onclick="removeRelationTarget('${item.value}')">×</span>`;
-        selectedContainer.appendChild(tag);
-    });
-}
-
-function removeRelationTarget(value) {
-    const checkbox = document.querySelector(`input[name="relationTarget"][value="${value}"]`);
-    if (checkbox) {
-        checkbox.checked = false;
-        updateRelationTargetSelection();
-    }
 }
 
 function saveSubjectRelation() {
