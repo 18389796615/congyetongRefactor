@@ -6561,16 +6561,6 @@ input[type="radio"]{cursor:pointer}
                         <textarea class="form-input" id="relationDescription" rows="3" placeholder="请输入关系描述（可选）"></textarea>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">生效日期</label>
-                        <input type="date" class="form-input" id="relationStartDate">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">失效日期</label>
-                        <input type="date" class="form-input" id="relationEndDate">
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="hideModal('addRelationModal')">取消</button>
@@ -9650,8 +9640,6 @@ function showAddRelationModal(type) {
     document.querySelectorAll('.tree-icon').forEach(icon => icon.classList.add('expanded'));
     
     document.getElementById('relationDescription').value = '';
-    document.getElementById('relationStartDate').value = '';
-    document.getElementById('relationEndDate').value = '';
     
     // 更新选中计数和标签
     updateRelationTargetSelection();
